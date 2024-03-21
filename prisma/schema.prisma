@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String     @id @default(cuid())
+  description String
+  imageUrl    String
+  name        String
+  price       Int
+  stock       Int
+  weight      Int
+  discount    Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  CartItem    CartItem[]
+
+  @@map("products")
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  items     CartItem[]
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  order     Orders?
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@map("cartitems")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  username      String?
+  name          String?
+  password      String?
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  phoneNumber   String?
+  fullAddress   String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  provinceId    String?
+  scope         String?   @default("member")
+  province      Provinces? @relation(fields: [provinceId], references: [id], onDelete: SetNull)
+  cityId        String?
+  city          Cities?    @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  accounts      Account[]
+  sessions      Session[]
+  cart          Cart[]
+  orders        Orders[]
+  invoices      Invoices[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  identifier String   @unique
+  token      String   @unique
+  expires    DateTime
+
+  @@map("verificationtokens")
+}
+
+model Provinces {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cities    Cities[]
+  users     User[]
+
+  @@map("provinces")
+}
+
+model Cities {
+  id         String    @id @default(cuid())
+  name       String    @unique
+  provinceId String
+  province   Provinces @relation(fields: [provinceId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  users      User[]
+
+  @@map("cities")
+}
+
+model Orders {
+  id              String    @id @default(cuid())
+  userId          String
+  cartId          String    @unique
+  paymentStatus   String
+  shippingStatus  String
+  shippingAddress String
+  shippingCourier String
+  shippingCost    Int
+  snapToken       String
+  snapRedirectUrl String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  totalPrice      Int
+  user            User      @relation(fields: [userId], references: [id])
+  cart            Cart      @relation(fields: [cartId], references: [id])
+  Invoices        Invoices?
+
+  @@map("orders")
+}
+
+model Invoices {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+  userId          String
+  name            String
+  phoneNumber     String
+  paymentStatus   String
+  shippingStatus  String
+  shippingAddress String
+  shippingCourier String
+  shippingCost    Int
+  totalPrice      Int
+  weight          Int
+  city            String
+  province        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  order           Orders   @relation(fields: [orderId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@map("invoices")
+}
