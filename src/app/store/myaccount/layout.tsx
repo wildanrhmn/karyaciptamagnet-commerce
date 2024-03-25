@@ -21,10 +21,10 @@ export default function ProfileLayout({
           <Link
             href={`/store/myaccount/${session?.user?.id}/profile`}
             className={clsx(
-              "flex items-center rounded-full border bg-white px-3 py-2.5 font-bold text-black",
+              "flex items-center rounded-full border  px-3 py-2.5 font-bold text-black",
               {
                 "bg-[#3c97d1] text-white":
-                  pathname === `/store/myaccount/${session?.user?.id}/profile`,
+                  pathname.includes(`/profile`),
               }
             )}
           >
@@ -33,10 +33,10 @@ export default function ProfileLayout({
           <Link
             href={`/store/myaccount/${session?.user?.id}/addresses`}
             className={clsx(
-              "flex items-center rounded-full border bg-white px-3 py-2.5 font-bold text-black",
+              "flex items-center rounded-full border px-3 py-2.5 font-bold text-black",
               {
                 "bg-[#3c97d1] text-white":
-                  pathname === `/store/myaccount/${session?.user?.id}/addresses`,
+                  pathname.includes(`/addresses`),
               }
             )}
           >

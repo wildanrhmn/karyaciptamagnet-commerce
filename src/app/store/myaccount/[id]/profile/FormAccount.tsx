@@ -54,7 +54,7 @@ export default function ManageAccount({ profile }: { profile: IUser }) {
                 />
               </div>
               <div className="flex flex-col space-y-5 sm:ml-8">
-                <div className="relative rounded-lg border border-primary cursor-pointer bg-primary px-7 py-3.5 text-base font-medium text-white hover:bg-[#e4a74c] focus:z-10 focus:outline-none focus:ring-4 focus:ring-indigo-200">
+                <div className="relative rounded-lg border border-primary cursor-pointer bg-primary px-7 py-3.5 text-base font-medium text-white hover:bg-[#418ab8] focus:z-10 focus:outline-none focus:ring-4 focus:ring-indigo-200">
                   Ganti Foto
                   <input
                     id="image"
@@ -181,7 +181,7 @@ export default function ManageAccount({ profile }: { profile: IUser }) {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="w-full rounded-lg  bg-primary px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-primary dark:hover:bg-[#e4a74c] sm:w-auto"
+                  className="w-full rounded-lg  bg-primary px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-primary dark:hover:bg-[#418ab8] sm:w-auto"
                 >
                   Simpan
                 </button>

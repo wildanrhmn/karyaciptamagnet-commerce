@@ -42,11 +42,18 @@ export type IUser = {
     emailVerified: Date
     image: ImageUrl
     phoneNumber: string
-    fullAddress: string
-    provinceId: string
-    cityId: string
-    provinces: IProvince | undefined
-    city: ICity | undefined
+    addresses: {
+        id: string,
+        fullAddress: string,
+        province: {
+            id: string
+            name: string
+        },
+        city: {
+            id: string
+            name: string
+        }
+    }
     scope: string
 }
 

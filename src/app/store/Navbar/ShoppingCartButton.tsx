@@ -50,8 +50,8 @@ export default function ShoppingCartButton({ cart }: ShoppingCartButtonProps) {
           </span>
           <div className="card-actions">
             <Link
-              href="/cart"
-              className="btn-primary btn-block btn"
+              href="/store/cart"
+              className="bg-primary hover:bg-[#418ab8] btn-block btn"
               onClick={closeDropdown}
             >
               View cart
