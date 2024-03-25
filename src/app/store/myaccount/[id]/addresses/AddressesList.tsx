@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import { SetActiveAddress } from "@/lib/action";
+import { SetActiveAddress, DeleteAddress } from "@/lib/action";
 
 import DialogCreate from "./DialogCreate";
 import DialogEdit from "./DialogEdit";
@@ -94,6 +94,16 @@ export default function AddressesList({
                       <Icon icon="basil:edit-outline" className="h-5 w-5" />
                     </button>
                     <button
+                    onClick={() => {
+                      DeleteAddress(data.id)
+                      .then((res) => {
+                        if (res.success) {
+                          toast.success(res.message);
+                        } else {
+                          toast.error(res.message);
+                        }
+                      })
+                    }}
                       className="w-max items-center justify-center rounded-md bg-white border border-primary px-4 py-2.5 text-sm font-medium text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                       <Icon icon="ph:trash" className="h-5 w-5" />

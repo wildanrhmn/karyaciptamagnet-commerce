@@ -99,6 +99,21 @@ export async function EditAddress(addressId : string, formData: IFormContactInpu
     return { success: true, message: 'Successfully edit address.' }
 }
 
+export async function DeleteAddress(addressId : string){
+    try{
+        await prisma.addresses.delete({
+            where: {
+                id: addressId
+            }
+        })
+    } catch(error){
+        console.log(error);
+        return { success: false, message: 'Unknown error.' };
+    }
+    revalidatePath('/store/myaccount/[id]/addresses', 'page')
+    return { success: true, message: 'Successfully delete address.' }
+}
+
 export async function SetActiveAddress(newId: string){
     try{
         await prisma.addresses.updateMany({
