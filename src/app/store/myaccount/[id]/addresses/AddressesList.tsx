@@ -1,26 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { SetActiveAddress } from "@/lib/action";
 
-import Dialog from "./Dialog";
+import DialogCreate from "./DialogCreate";
+import DialogEdit from "./DialogEdit";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 
 export default function AddressesList({
-  data,
+  dataProvince,
   addressData,
 }: {
-  data: any[];
+  dataProvince: any[];
   addressData: any[];
 }) {
+
+  const [editData, setEditData] = useState(null);
   return (
     <div className="mx-auto mt-8 grid max-w-2xl">
       <div className="mb-8 flex justify-end">
         <button
           onClick={() => {
             const modal = document.getElementById(
-              "my_modal_2"
+              "my_modal_1"
             ) as HTMLDialogElement;
             if (modal) {
               modal.showModal();
@@ -48,7 +52,7 @@ export default function AddressesList({
                   {data.user?.name}
                   <span className="text-sm text-gray-600">+62 {data.user?.phoneNumber}</span>
                 </div>
-                <p className="text-base text-gray-700">
+                <p className="text-base text-gray-700 line-clamp-2">
                   {`${data.province?.name}, ${data.city?.name}. ${data.fullAddress}`}
                 </p>
               </div>
@@ -59,31 +63,53 @@ export default function AddressesList({
                     className="h-11 w-11 text-primary"
                   />
                 ) : (
-                  <button
-                    onClick={() => {
-                      SetActiveAddress(data.id)
-                      .then((res) => {
-                        if (res.success) {
-                          toast.success(res.message);
-                        } else {
-                          toast.error(res.message);
+                  <div className="flex items-center flex-wrap gap-3">                    
+                    <button
+                      onClick={() => {
+                        SetActiveAddress(data.id)
+                        .then((res) => {
+                          if (res.success) {
+                            toast.success(res.message);
+                          } else {
+                            toast.error(res.message);
+                          }
+                        })
+                      }}
+                      className="w-max items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-[#418ab8] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Aktifkan Alamat
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditData(data)
+                        const modal = document.getElementById(
+                          "my_modal_2"
+                        ) as HTMLDialogElement;
+                        if (modal) {
+                          modal.showModal();
                         }
-                      })
-                    }}
-                    className="w-max items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-[#418ab8] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    Aktifkan Alamat
-                  </button>
+                      }}
+                      className="w-max items-center justify-center rounded-md bg-white border border-primary px-4 py-2.5 text-sm font-medium text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      <Icon icon="basil:edit-outline" className="h-5 w-5" />
+                    </button>
+                    <button
+                      className="w-max items-center justify-center rounded-md bg-white border border-primary px-4 py-2.5 text-sm font-medium text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      <Icon icon="ph:trash" className="h-5 w-5" />
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
+            <DialogEdit data={dataProvince} editData={editData} provinceId={data.province?.id} cityId={data.city?.id} />
           </div>
           ))
         ) : (
           <p>Tidak ada alamat</p>
         )}
       </div>
-      <Dialog data={data} />
+      <DialogCreate data={dataProvince} />
     </div>
   );
 }

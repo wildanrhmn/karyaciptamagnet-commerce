@@ -28,7 +28,7 @@ export default async function AddressesListPage({
         <div className="mt-8 w-full px-6 pb-8 sm:max-w-xl sm:rounded-lg">
           <h2 className="pl-6 text-2xl font-bold sm:text-xl">Daftar Alamat</h2>
         </div>
-        <AddressesList data={provinces} addressData={profile} />
+        <AddressesList dataProvince={provinces} addressData={profile} />
       </div>
     </div>
   );

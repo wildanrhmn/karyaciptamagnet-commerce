@@ -5,14 +5,25 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Icon } from "@iconify/react";
-import { CreateNewAddress } from "@/lib/action";
+import { EditAddress } from "@/lib/action";
 export interface IFormContactInput {
   provinceId: string;
   cityId: string;
   addressTo: string;
   fullAddress: string;
 }
-export default function Dialog({ data }: { data: any[] }) {
+export default function DialogEdit({
+  editData,
+  data,
+  provinceId,
+  cityId,
+}: {
+  editData: any;
+  provinceId: string;
+  cityId: string;
+  data: any[];
+}) {
+    console.info(editData)
   const [cities, setCities] = useState([]);
   const {
     register,
@@ -23,7 +34,7 @@ export default function Dialog({ data }: { data: any[] }) {
 
   const onSubmit: SubmitHandler<IFormContactInput> = async (data) => {
     const dialog = document.querySelector("#my_modal_2") as HTMLDialogElement;
-    const result: any = await CreateNewAddress(data);
+    const result: any = await EditAddress(editData?.id, data);
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -35,7 +46,7 @@ export default function Dialog({ data }: { data: any[] }) {
   return (
     <dialog id="my_modal_2" className="modal">
       <div className="modal-box">
-        <h3 className="mb-8 text-lg font-bold">Tambahkan alamat baru</h3>
+        <h3 className="mb-8 text-lg font-bold">Edit alamat</h3>
         <form
           onSubmit={handleSubmit(onSubmit)}
           method="dialog"
@@ -52,7 +63,7 @@ export default function Dialog({ data }: { data: any[] }) {
               <select
                 id="addressTo"
                 className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                defaultValue=""
+                defaultValue={editData?.addressTo}
                 {...register("addressTo", {
                   required: true,
                 })}
@@ -88,7 +99,7 @@ export default function Dialog({ data }: { data: any[] }) {
               <select
                 id="provinceId"
                 className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                defaultValue=""
+                defaultValue={provinceId}
                 {...register("provinceId", {
                   required: true,
                 })}
@@ -132,8 +143,7 @@ export default function Dialog({ data }: { data: any[] }) {
               <select
                 id="cityId"
                 className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                defaultValue=""
-                disabled={cities.length === 0}
+                defaultValue={cityId}
                 {...register("cityId", {
                   required: true,
                 })}
@@ -141,11 +151,23 @@ export default function Dialog({ data }: { data: any[] }) {
                 <option value="" disabled>
                   Pilih kota
                 </option>
-                {cities.map((city: any) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name}
-                  </option>
-                ))}
+                {cities.length === 0 ? (
+                  <>
+                    {data
+                      .filter((city: any) => city.id === provinceId)[0]
+                      .cities.map((city: any) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name}
+                        </option>
+                      ))}
+                  </>
+                ) : (
+                  cities.map((city: any) => (
+                    <option key={city.id} value={city.id}>
+                      {city.name}
+                    </option>
+                  ))
+                )}
               </select>
               <Icon
                 icon="solar:city-outline"
@@ -174,7 +196,7 @@ export default function Dialog({ data }: { data: any[] }) {
                   id="fullAddress"
                   placeholder="Masukan detail alamat..."
                   className="peer block h-32 w-full resize-none rounded-md border border-gray-200 px-2 py-2 text-sm outline-2 placeholder:text-gray-500"
-                  defaultValue=""
+                  defaultValue={editData?.fullAddress}
                   aria-describedby="firstName-error"
                   {...register("fullAddress", {
                     required: true,
@@ -194,7 +216,12 @@ export default function Dialog({ data }: { data: any[] }) {
           </div>
 
           <div className="">
-              <button className="bg-primary px-6 py-3 rounded-md text-white text-sm hover:bg-primary/90 transition-all duration-150" type="submit">Simpan</button>
+            <button
+              className="rounded-md bg-primary px-6 py-3 text-sm text-white transition-all duration-150 hover:bg-primary/90"
+              type="submit"
+            >
+              Simpan
+            </button>
           </div>
         </form>
       </div>

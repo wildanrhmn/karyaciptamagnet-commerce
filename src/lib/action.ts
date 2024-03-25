@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 
 import { IFormRegisterInput } from "@/app/auth/signup/RegisterForm";
 import { IFormLoginInput } from "@/app/auth/signin/LoginForm";
-import { IFormContactInput } from "@/app/store/myaccount/[id]/addresses/Dialog";
+import { IFormContactInput } from "@/app/store/myaccount/[id]/addresses/DialogCreate";
 
 import { AuthError } from "next-auth";
 import { prisma } from "./db/prisma";
@@ -75,6 +75,28 @@ export async function CreateNewAddress(formData: IFormContactInput){
     }
     revalidatePath('/store/myaccount/[id]/addresses', 'page')
     return { success: true, message: 'Successfully created new address.' }
+}
+
+export async function EditAddress(addressId : string, formData: IFormContactInput){
+    const { provinceId, cityId, addressTo, fullAddress } = formData;
+    try{
+        await prisma.addresses.update({
+            where: {
+                id: addressId
+            },
+            data: {
+                provinceId,
+                cityId,
+                addressTo,
+                fullAddress
+            }
+        })
+    } catch(error){
+        console.log(error);
+        return { success: false, message: 'Unknown error.' };
+    }
+    revalidatePath('/store/myaccount/[id]/addresses', 'page')
+    return { success: true, message: 'Successfully edit address.' }
 }
 
 export async function SetActiveAddress(newId: string){
