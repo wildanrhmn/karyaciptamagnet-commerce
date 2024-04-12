@@ -22,7 +22,7 @@ export default function DialogCreate({ data }: { data: any[] }) {
   } = useForm<IFormContactInput>();
 
   const onSubmit: SubmitHandler<IFormContactInput> = async (data) => {
-    const dialog = document.querySelector("#my_modal_2") as HTMLDialogElement;
+    const dialog = document.querySelector("#my_modal_1") as HTMLDialogElement;
     const result: any = await CreateNewAddress(data);
     if (result.success) {
       toast.success(result.message);

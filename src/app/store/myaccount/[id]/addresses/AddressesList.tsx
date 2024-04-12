@@ -116,7 +116,10 @@ export default function AddressesList({
           </div>
           ))
         ) : (
-          <p>Tidak ada alamat</p>
+          <div className="w-full flex items-center justify-center flex-col h-56">
+            <Icon icon="mdi:address-marker" className="w-24 h-24 text-primary" />
+            <p className="text-gray-600">Anda belum menambahkan alamat.</p>
+          </div>
         )}
       </div>
       <DialogCreate data={dataProvince} />

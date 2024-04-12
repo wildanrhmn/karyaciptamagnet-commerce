@@ -8,7 +8,7 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const role = auth?.user?.scope || "";
-      const isOnSignPage = nextUrl.pathname.startsWith('/auth');
+      const isOnSignPage = nextUrl.pathname.includes('/auth');
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       const isOnProfile = nextUrl.pathname.includes('/myaccount');
       const adminRole = ['administrator', 'manager', 'marketing'];
