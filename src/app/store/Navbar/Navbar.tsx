@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import ShoppingCartButton from "./ShoppingCartButton";
 import UserMenuButton from "./UserMenuButton";
 import { auth } from "@/auth";
+import BurgerBar from "./BurgerBar";
 async function searchProducts(formData: FormData) {
   "use server";
 
@@ -25,11 +26,13 @@ export default async function Navbar() {
           <Image src="/logo.png" alt="logo" width={50} height={50} />
         </Link>
         <div className="flex w-full flex-wrap items-center">
-          <input
-            type="text"
-            placeholder="Cari sesuatu..."
-            className="h-10 rounded bg-gray-100 px-6 text-sm outline-[#333] max-lg:ml-4 max-lg:w-full max-md:mt-4 lg:ml-8 xl:w-96"
-          />
+          <form action={searchProducts}>
+            <input
+              type="text"
+              placeholder="Cari sesuatu..."
+              className="h-10 rounded bg-gray-100 px-6 text-sm outline-[#333] max-lg:ml-4 max-lg:w-full max-md:mt-4 lg:ml-8 xl:w-96"
+            />
+          </form>
           <div className="ml-auto max-lg:mt-4">
             <ul className="flex items-center">
               <li className="flex cursor-pointer px-3 text-[15px] font-medium text-[#333] hover:fill-primary hover:text-primary max-lg:py-2 max-sm:hidden">
@@ -99,20 +102,7 @@ export default async function Navbar() {
                 )}
               </li>
               <li id="toggle" className="lg:hidden">
-                <button>
-                  <svg
-                    className="h-7 w-7"
-                    fill="#333"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </button>
+                <BurgerBar />
               </li>
             </ul>
           </div>
@@ -125,7 +115,7 @@ export default async function Navbar() {
         <ul className="flex w-full justify-center max-lg:block max-lg:space-y-3 lg:space-x-4">
           <li className="px-3 max-lg:border-b max-lg:py-2">
             <Link
-              href="javascript:void(0)"
+              href="#"
               className="block text-[15px] font-medium text-white lg:hover:text-gray-200"
             >
               Magnet Trap
@@ -133,7 +123,7 @@ export default async function Navbar() {
           </li>
           <li className="px-3 max-lg:border-b max-lg:py-2">
             <Link
-              href="javascript:void(0)"
+              href="#"
               className="block text-[15px] font-medium text-white lg:hover:text-gray-200"
             >
               Magnet Bar
@@ -141,7 +131,7 @@ export default async function Navbar() {
           </li>
           <li className="px-3 max-lg:border-b max-lg:py-2">
             <Link
-              href="javascript:void(0)"
+              href="#"
               className="block text-[15px] font-medium text-white lg:hover:text-gray-200"
             >
               Magnet Separator
@@ -149,7 +139,7 @@ export default async function Navbar() {
           </li>
           <li className="px-3 max-lg:border-b max-lg:py-2">
             <Link
-              href="javascript:void(0)"
+              href="#"
               className="block text-[15px] font-medium text-white lg:hover:text-gray-200"
             >
               Magnet Hopper
@@ -157,7 +147,7 @@ export default async function Navbar() {
           </li>
           <li className="px-3 max-lg:border-b max-lg:py-2">
             <Link
-              href="javascript:void(0)"
+              href="#"
               className="block text-[15px] font-medium text-white lg:hover:text-gray-200"
             >
               Magnet Powder
@@ -165,7 +155,7 @@ export default async function Navbar() {
           </li>
           <li className="px-3 max-lg:border-b max-lg:py-2">
             <Link
-              href="javascript:void(0)"
+              href="#"
               className="block text-[15px] font-medium text-white lg:hover:text-gray-200"
             >
               Magnet Trap Liquid

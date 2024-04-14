@@ -1,5 +1,7 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar/Navbar";
+import MobileSidebar from "./Navbar/MobileSidebar";
+import { HeaderProvider } from "@/context/NavbarContext";
 
 export const metadata = {
   title: "CV Karya Cipta Magnet Online Store",
@@ -14,7 +16,10 @@ export default function StoreLayout({
 }) {
   return (
       <div>
+        <HeaderProvider>
           <Navbar />
+          <MobileSidebar />
+        </HeaderProvider>
           <main className="m-auto min-w-[300px] max-w-7xl p-4">{children}</main>
           <Footer />
       </div>
