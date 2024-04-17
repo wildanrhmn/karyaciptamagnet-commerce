@@ -1,6 +1,7 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar/Navbar";
 import MobileSidebar from "./Navbar/MobileSidebar";
+import Hero from "@/components/ui/home/Hero";
 import { HeaderProvider } from "@/context/NavbarContext";
 
 export const metadata = {
@@ -15,13 +16,14 @@ export default function StoreLayout({
   children: React.ReactNode;
 }) {
   return (
-      <div>
-        <HeaderProvider>
-          <Navbar />
-          <MobileSidebar />
-        </HeaderProvider>
-          <main className="m-auto min-w-[300px] max-w-7xl p-4">{children}</main>
-          <Footer />
-      </div>
+    <div>
+      <HeaderProvider>
+        <Navbar />
+        <MobileSidebar />
+      </HeaderProvider>
+      <Hero />
+      <main className="container mx-auto">{children}</main>
+      <Footer />
+    </div>
   );
 }

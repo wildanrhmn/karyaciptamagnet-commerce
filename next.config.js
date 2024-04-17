@@ -4,7 +4,8 @@ const nextConfig = {
     remotePatterns: [
       { hostname: "images.unsplash.com" },
       { hostname: "lh3.googleusercontent.com" },
-      { hostname: "res.cloudinary.com" }
+      { hostname: "res.cloudinary.com" },
+      { hostname: "readymadeui.com" }
     ],
   },
   redirects: () => [

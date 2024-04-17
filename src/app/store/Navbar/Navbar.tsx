@@ -58,7 +58,7 @@ export default async function Navbar() {
                     />
                   </g>
                 </svg>
-                Kontak Kerjasama
+                Produk Kami
               </li>
               <li className="flex cursor-pointer px-3 text-[15px] font-medium text-[#333] hover:fill-primary hover:text-primary max-lg:py-2 max-sm:hidden">
                 <svg
