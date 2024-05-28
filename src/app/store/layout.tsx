@@ -1,7 +1,6 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar/Navbar";
 import MobileSidebar from "./Navbar/MobileSidebar";
-import Hero from "@/components/ui/home/Hero";
 import { HeaderProvider } from "@/context/NavbarContext";
 
 export const metadata = {
@@ -21,8 +20,7 @@ export default function StoreLayout({
         <Navbar />
         <MobileSidebar />
       </HeaderProvider>
-      <Hero />
-      <main className="container mx-auto">{children}</main>
+      <main>{children}</main>
       <Footer />
     </div>
   );

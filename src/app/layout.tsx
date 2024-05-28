@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthWrapper>
-          <main className="bg-white">{children}</main>
+          <main className="bg-[#F8F8F8]">{children}</main>
           <Toaster position="bottom-center" />
         </AuthWrapper>
       </body>

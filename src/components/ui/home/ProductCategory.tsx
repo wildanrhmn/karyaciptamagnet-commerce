@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function ProductCategory() {
   return (
-    <div className="container py-16">
+    <div className="container mx-auto py-16">
       <h2 className="mb-6 text-2xl font-bold uppercase text-gray-800">
         KATEGORI MAGNET
       </h2>

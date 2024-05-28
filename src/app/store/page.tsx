@@ -4,9 +4,12 @@ import Link from "next/link";
 import PaginationBar from "@/components/PaginationBar";
 import ProductCard from "@/components/ProductCard";
 
+import Hero from "@/components/ui/home/Hero";
 import Feature from "@/components/ui/home/Feature";
 import ProductCategory from "@/components/ui/home/ProductCategory";
 import Banner from "@/components/ui/home/Banner";
+import FeaturedProducts from "@/components/ui/home/FeaturedProducts";
+import AboutUs from "@/components/ui/home/AboutUs";
 
 import { getProducts, getTotalPages } from "@/lib/data";
 export default async function Home({
@@ -18,13 +21,16 @@ export default async function Home({
   const totalPages = await getTotalPages({});
   const products = await getProducts(currentPage);
 
-  return(
+  return (
     <>
+      <Hero />
       <Feature />
       <ProductCategory />
       <Banner />
+      <FeaturedProducts />
+      <AboutUs />
     </>
-  )
+  );
 
   // if (products.length === 0) {
   //   return <div className="min-h-screen text-center">No products found</div>;

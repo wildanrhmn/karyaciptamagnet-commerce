@@ -1,6 +1,6 @@
 export default function Feature() {
   return (
-    <div className="container py-16">
+    <div className="container mx-auto py-16">
       <div className="mx-auto grid w-10/12 grid-cols-1 justify-center gap-6 md:grid-cols-3">
         <div className="flex items-center justify-center gap-5 rounded-sm border border-primary px-3 py-6">
           <svg

@@ -15,7 +15,8 @@ export default function Banner() {
           Nyatakan Penawaran Anda
         </h2>
         <p className="text-center text-lg text-gray-200">
-          Kontak kami untuk mendapatkan harga khusus dengan Magnet Trap kualitas terbaik!
+          Kontak kami untuk mendapatkan harga khusus dengan Magnet Trap kualitas
+          terbaik!
         </p>
         <Link
           href="#"
