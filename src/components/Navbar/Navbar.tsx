@@ -30,12 +30,12 @@ export default async function Navbar() {
             <input
               type="text"
               placeholder="Cari sesuatu..."
-              className="h-10 rounded bg-gray-100 px-6 text-sm outline-[#333] max-lg:ml-4 max-lg:w-full max-md:mt-4 lg:ml-8 xl:w-96"
+              className="h-10 rounded bg-gray-100 px-6 text-sm outline-primary max-lg:ml-4 max-lg:w-full max-md:mt-4 lg:ml-8 xl:w-96"
             />
           </form>
           <div className="ml-auto max-lg:mt-4">
             <ul className="flex items-center">
-              <li className="flex cursor-pointer px-3 text-[15px] font-medium text-[#333] hover:fill-primary hover:text-primary max-lg:py-2 max-sm:hidden">
+              <Link href="/store/products" className="flex cursor-pointer px-3 text-[15px] font-medium text-[#333] hover:fill-primary hover:text-primary max-lg:py-2 max-sm:hidden">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20px"
@@ -59,8 +59,8 @@ export default async function Navbar() {
                   </g>
                 </svg>
                 Produk Kami
-              </li>
-              <li className="flex cursor-pointer px-3 text-[15px] font-medium text-[#333] hover:fill-primary hover:text-primary max-lg:py-2 max-sm:hidden">
+              </Link>
+              <Link href="/store/aboutus" className="flex cursor-pointer px-3 text-[15px] font-medium text-[#333] hover:fill-primary hover:text-primary max-lg:py-2 max-sm:hidden">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20px"
@@ -74,7 +74,7 @@ export default async function Navbar() {
                   />
                 </svg>
                 Tentang Kami
-              </li>
+              </Link>
               <li className="flex cursor-pointer px-3 text-[15px] hover:fill-primary hover:text-primary max-lg:py-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

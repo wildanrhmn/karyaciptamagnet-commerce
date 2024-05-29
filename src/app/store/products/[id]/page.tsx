@@ -25,7 +25,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
+export default async function DetailProductPage({
   params,
 }: {
   params: { id: string };

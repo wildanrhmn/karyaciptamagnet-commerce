@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import AuthWrapper from "@/auth-wrapper";
+import Providers from "@/components/ProgressBar";
 
 const inter = Inter({ subsets: ["latin"] });
 import { Toaster } from "react-hot-toast";
@@ -20,8 +21,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthWrapper>
-          <main className="bg-[#F8F8F8]">{children}</main>
-          <Toaster position="bottom-center" />
+          <Providers>
+            <main className="bg-[#F8F8F8]">{children}</main>
+            <Toaster position="bottom-center" />
+          </Providers>
         </AuthWrapper>
       </body>
     </html>

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <div
@@ -15,18 +17,20 @@ export default function Hero() {
           CV. Karya Cipta Magnet
         </h1>
         <p>
-          CV. Karya Cipta Magnet (KCM) adalah Specialist Permanent Magnet Trap <br />
+          CV. Karya Cipta Magnet (KCM) adalah Specialist Permanent Magnet Trap{" "}
+          <br />
           yang berada di Kec Gunung sindur, Bogor, Jawa Barat. KCM adalah salah
-          satu <br /> perusahaan yang bergerak dalam usaha rekayasa mekanik maupun supplier.
+          satu <br /> perusahaan yang bergerak dalam usaha rekayasa mekanik
+          maupun supplier.
         </p>
         <div className="mt-12">
-          <a
+          <Link
             href="#"
             className="rounded-md border border-primary bg-primary px-8 py-3 font-medium 
-            text-white hover:bg-transparent hover:text-primary"
+        text-white hover:bg-transparent hover:text-primary"
           >
             Lihat Produk
-          </a>
+          </Link>
         </div>
       </div>
     </div>

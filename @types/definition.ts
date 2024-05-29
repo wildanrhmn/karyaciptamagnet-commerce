@@ -1,20 +1,12 @@
 export type ImageUrl = {
-    url: string
-    public_id: string
-}
+    url: string;
+    public_id: string;
+};
 
 export type IProduct = {
-    id: string
-    name: string
-    description: string
-    imageUrl: ImageUrl[]
-    price: number
-    stock: number
-    weight: number
-    discount: number
-    createdAt: Date
-    updatedAt: Date
-}
+    name: string;
+    image: ImageUrl[];
+};
 
 export type ICart = {
     id: string

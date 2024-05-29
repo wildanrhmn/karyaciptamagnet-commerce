@@ -1,6 +1,6 @@
-import Footer from "./Footer";
-import Navbar from "./Navbar/Navbar";
-import MobileSidebar from "./Navbar/MobileSidebar";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar/Navbar";
+import MobileSidebar from "../../components/Navbar/MobileSidebar";
 import { HeaderProvider } from "@/context/NavbarContext";
 
 export const metadata = {
