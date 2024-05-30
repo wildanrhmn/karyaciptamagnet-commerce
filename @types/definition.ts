@@ -4,8 +4,10 @@ export type ImageUrl = {
 };
 
 export type IProduct = {
+    id: string;
     name: string;
     image: ImageUrl[];
+    desc: string;
 };
 
 export type ICart = {

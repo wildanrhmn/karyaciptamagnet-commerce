@@ -1,27 +1,22 @@
-import PriceTag from "@/components/PriceTag";
 import { Metadata } from "next";
 import Image from "next/image";
 import AddToCartButton from "./AddToCartButton";
 import { incrementProductQuantity } from "./actions";
 import { getProductById } from "@/lib/data";
-
+import { TopProducts } from "@/lib/placeholder-data";
+import ProductThumbnail from "@/components/ui/detailproduct/ProductThumbnail";
+import ProductDescription from "@/components/ui/detailproduct/ProductDescription";
 export async function generateMetadata({
   params,
 }: {
   params: { id: string };
 }): Promise<Metadata> {
-  const product = await getProductById(params.id);
+  const product = TopProducts.find((product) => product.id === params.id);
 
   return {
     metadataBase: new URL("http://localhost:3000"),
-    title: product.name + " - Karya Cipta Magnet",
-    description: product.description,
-    openGraph: {
-      images: [{ url: product.imageUrl[0].url }],
-    },
-    twitter: {
-      images: { url: product.imageUrl[0].url },
-    }
+    title: product?.name + " - Karya Cipta Magnet",
+    description: "",
   };
 }
 
@@ -30,27 +25,20 @@ export default async function DetailProductPage({
 }: {
   params: { id: string };
 }) {
-  const product = await getProductById(params.id);
+  const product = TopProducts.find((product) => product.id === params.id);
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-      <Image
-        src={product.imageUrl[0].url}
-        alt={product.name}
-        width={500}
-        height={500}
-        className="rounded-lg"
-        priority
-      />
-      <div>
-        <h1 className="text-5xl font-bold">{product.name}</h1>
-        <PriceTag price={product.price} className="mt-4" />
-        <p className="py-6">{product.description}</p>
-        <AddToCartButton
-          productId={product.id}
-          incrementProductQuantity={incrementProductQuantity}
-        />
+    <section className="container mx-auto px-32 py-11">
+      <div className="grid grid-cols-12 gap-3">
+        <div className="col-span-12 lg:col-span-5">
+          <ProductThumbnail
+            productImages={product?.image!}
+          />
+        </div>
+        <div className="col-span-12 lg:col-span-7 my-1">
+          <ProductDescription product={product!} />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
