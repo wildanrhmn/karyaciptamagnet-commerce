@@ -3,14 +3,23 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ImageUrl } from "../../../../@types/definition";
+
 const ProductThumbnail = ({ productImages }: { productImages: ImageUrl[] }) => {
   const [mainImage, setMainImage] = useState(productImages[0].url!);
   const [magnifyStyle, setMagnifyStyle] = useState({
-    backgroundPosition: "0",
+    backgroundPosition: "center",
     backgroundSize: "cover",
   });
-  const handleDynamicBgPosition = (e: any) => {
-    const rect = e.target.getBoundingClientRect();
+
+  const handleMouseLeave = () => {
+    setMagnifyStyle({
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+    });
+  };
+
+  const handleDynamicBgPosition = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const bgPosition = `-${x * 0.5}px -${y * 0.5}px`;
@@ -24,12 +33,7 @@ const ProductThumbnail = ({ productImages }: { productImages: ImageUrl[] }) => {
     <div className="flex flex-col items-start gap-3">
       <div
         onMouseMove={handleDynamicBgPosition}
-        onMouseLeave={() =>
-          setMagnifyStyle({
-            backgroundPosition: "0",
-            backgroundSize: "cover",
-          })
-        }
+        onMouseLeave={handleMouseLeave}
         className="relative h-[380px] w-full overflow-hidden border border-[#D9D9D9] cursor-pointer"
       >
         <div

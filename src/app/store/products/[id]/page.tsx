@@ -1,8 +1,4 @@
 import { Metadata } from "next";
-import Image from "next/image";
-import AddToCartButton from "./AddToCartButton";
-import { incrementProductQuantity } from "./actions";
-import { getProductById } from "@/lib/data";
 import { TopProducts } from "@/lib/placeholder-data";
 import ProductThumbnail from "@/components/ui/detailproduct/ProductThumbnail";
 import ProductDescription from "@/components/ui/detailproduct/ProductDescription";
@@ -29,7 +25,7 @@ export default async function DetailProductPage({
 
   return (
     <section className="container mx-auto px-32 py-11">
-      <div className="grid grid-cols-12 gap-3">
+      <div className="grid grid-cols-12 gap-11">
         <div className="col-span-12 lg:col-span-5">
           <ProductThumbnail
             productImages={product?.image!}
