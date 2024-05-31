@@ -91,18 +91,57 @@ const ProductDescription = ({ product }: { product: IProduct }) => {
             </li>
           </ul>
         </div>
-      </div>
 
-      <div className="flex items-start gap-5">
-        <button className="flex items-center justify-center gap-2 bg-primary px-4 py-3 text-base font-semibold text-white">
-          Pesan Sekarang
-          <Icon icon="icon-park-outline:buy" className="h-5 w-5" />
-        </button>
+        {tab.descriptionActive && (
+          <div>
+            <h2 className="mb-3 text-lg font-bold">
+              Detail Magnet Trap Separator 9.000
+            </h2>
+            <div className="desbox p-b-4 h-min max-h-[300px] overflow-hidden">
+              <div className="text-justify">
+                CV. Gauss Magnet Indonesia jual Magnet Trap Separator 9.000
+                terbaik dan Profesional. Cek disini untuk informasi lebih
+                lengkapnya! Sesuai dengan namanya, magnet trap ini berfungsi
+                sebagai penangkap kontaminan metal (serbuk metal, metal piece,
+                dan lain sebagainya) baik berupa bubuk, granule, maupun
+                biji-bijian, yang ada pada produk pangan seperti kopi, teh,
+                cabai, tepung, dan industri limbah.
+              </div>
+              <div className="mt-5">
+                <strong>Spesifikasi Magnet Trap Separator:</strong>
+              </div>
+              <ul className="list-disc pl-5">
+                <li>
+                  <span>P: 495mm, L: 205mm</span>
+                </li>
+                <li>
+                  <span>9 Batang Magnet Bar Silinder</span>
+                </li>
+                <li>
+                  <span>Magnet Intensity 9.000 Gauss</span>
+                </li>
+                <li>
+                  <span>Max Temperature: 80 C</span>
+                </li>
+                <li>
+                  <span>Material: SUS 316, SUS 304</span>
+                </li>
+              </ul>
+            </div>
 
-        <button className="flex items-center justify-center gap-2 bg-[#1E293B] px-4 py-3 text-base font-semibold text-white">
-          Tambahkan ke Keranjang
-          <Icon icon="bi:cart" className="h-5 w-5" />
-        </button>
+            <div className="mt-11  flex items-start gap-5">
+              <button className="flex items-center justify-center gap-2 bg-primary px-4 py-3 text-base font-semibold text-white">
+                Pesan Sekarang
+                <Icon icon="icon-park-outline:buy" className="h-5 w-5" />
+              </button>
+
+              <button className="flex items-center justify-center gap-2 bg-[#1E293B] px-4 py-3 text-base font-semibold text-white">
+                Tambahkan ke Keranjang
+                <Icon icon="bi:cart" className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
