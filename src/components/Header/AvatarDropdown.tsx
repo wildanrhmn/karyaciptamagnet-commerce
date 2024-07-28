@@ -64,7 +64,7 @@ export default function AvatarDropdown() {
                             <h4 className="font-semibold">
                               {session?.user.name || session?.user.username}
                             </h4>
-                            <p className="text-xs mt-0.5">Los Angeles, CA</p>
+                            <p className="text-xs mt-0.5">{session?.user.scope}</p>
                           </div>
                         </div>
                         <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
