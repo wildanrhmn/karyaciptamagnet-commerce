@@ -190,3 +190,4 @@ model Invoices {
 
   @@map("invoices")
 }
+    

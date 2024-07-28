@@ -98,3 +98,8 @@ export type IInvoice = {
     user: IUser
     order: IOrder
 }
+
+export type LoginForm = {
+    username: string;
+    password: string;
+}
