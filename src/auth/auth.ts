@@ -45,24 +45,49 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       if (account?.provider === 'google') {
-        if (user?.email && !user?.image) {
-          await prisma.user.update({
-            where: {
-              email: user?.email
-            },
+        const existingUser = await prisma.user.findUnique({
+          where: {
+            email: user?.email ?? undefined
+          }
+        });
+
+        if (!existingUser) {
+          await prisma.user.create({
             data: {
-              image: JSON.stringify({url: profile?.image, public_id: ''})
+              email: user?.email,
+              name: user?.name,
+              image: JSON.stringify({url: user?.image, public_id: ''})
             }
-          })
+          });
+        } else if (existingUser) {
+          const updateData: { name?: string; image?: string } = {};
+          
+          if (!existingUser.name) {
+            updateData.name = user?.name!;
+          }
+          
+          if (!existingUser.image) {
+            updateData.image = JSON.stringify({url: user?.image, public_id: ''});
+          }
+          
+          if (Object.keys(updateData).length > 0) {
+            await prisma.user.update({
+              where: {
+                email: user?.email!
+              },
+              data: updateData
+            });
+          }
         }
       }
-      return true
+      return true;
     },
     async jwt({ token, user }) {
       return { ...token, ...user };
     },
     async session({ session, token }) {
       session.user.id = token.sub;
+      session.user.username = token.username;
       session.user.scope = token.scope
       session.user.image = JSON.parse(token.image as string) 
       return session;

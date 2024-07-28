@@ -39,17 +39,35 @@ const PageSignUp = () => {
     setIsLoading(true);
     toast.loading("Registering...");
 
-    const result: any = await SignUpAction(data);
-    if (result.success) {
-      toast.dismiss();
-      toast.success(result.message);
-      router.push("/");
-    } else {
-      toast.dismiss();
-      toast.error(result.message);
+    try {
+        const result = await SignUpAction(data);
+        if (result.success) {
+            toast.dismiss();
+            toast.success(result.message);
+            
+            // Sign in the user after successful registration
+            const signInResult = await signIn('credentials', {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            });
+
+            if (signInResult?.error) {
+                toast.error("Error signing in after registration");
+            } else {
+                router.push("/");
+            }
+        } else {
+            toast.dismiss();
+            toast.error(result.message);
+        }
+    } catch (error) {
+        toast.dismiss();
+        toast.error("An error occurred during registration");
+    } finally {
+        setIsLoading(false);
     }
-    setIsLoading(false);
-  };
+};
   return (
     <div className={`nc-PageSignUp `} data-nc-id="PageSignUp">
       <div className="container mb-24 lg:mb-32">

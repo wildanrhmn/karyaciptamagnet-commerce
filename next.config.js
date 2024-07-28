@@ -5,18 +5,10 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.pexels.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        port: "",
-        pathname: "/**",
-      },
+      { hostname: "images.unsplash.com" },
+      { hostname: "lh3.googleusercontent.com" },
+      { hostname: "res.cloudinary.com" },
+      { hostname: "readymadeui.com" }
     ],
   },
 };

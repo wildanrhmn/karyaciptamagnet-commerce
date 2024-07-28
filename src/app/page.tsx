@@ -16,8 +16,10 @@ import ButtonSecondary from "@/shared/Button/ButtonSecondary";
 import { PRODUCTS, SPORT_PRODUCTS } from "@/data/data";
 import SectionGridFeatureItems from "@/components/SectionGridFeatureItems";
 import SectionMagazine5 from "@/app/blog/SectionMagazine5";
-
+import { auth } from "@/auth/auth";
 async function PageHome() {
+  const session = await auth();
+  // console.info(session)
   return (
     <div className="nc-PageHome relative overflow-hidden">
       <SectionHero2 />

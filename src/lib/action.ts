@@ -29,26 +29,21 @@ export async function SignInAction(formData: IFormLoginInput) {
 }
 
 export async function SignUpAction(formData: IFormRegisterInput) {
-    const { username, password, email } = formData;
-
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await prisma.user.create({
-            data: {
-                username,
-                email,
-                password: hashedPassword,
-            }
-        })
-            .then(async () => {
-                const credentials = {
-                    email,
-                    password
-                }
-                await signIn('credentials', credentials);
-            });
-    } catch (error) {
-        return { success: false, message: 'Unknown error.' };
-    }
-    return { success: true, message: 'Successfully registered.' }
+  const { username, password, email } = formData;
+  
+  try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await prisma.user.create({
+          data: {
+              username,
+              email,
+              password: hashedPassword,
+          }
+      });
+      
+      return { success: true, message: 'Successfully registered.' };
+  } catch (error) {
+      console.error(error);
+      return { success: false, message: 'Unknown error.' };
+  }
 }

@@ -186,18 +186,18 @@ export const NAVIGATION_DEMO_2: NavItemType[] = [
   {
     id: ncNanoId(),
     href: "/collection",
-    name: "Products",
+    name: "Produk",
   },
   {
     id: ncNanoId(),
     href: "/about",
-    name: "About Us",
+    name: "Tentang Kami",
   },
 
   {
     id: ncNanoId(),
     href: "/contact",
-    name: "Contact",
+    name: "Kontak",
   },
   // {
   //   id: ncNanoId(),

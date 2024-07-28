@@ -39,16 +39,34 @@ const PageLogin = () => {
     setIsLoading(true);
     toast.loading("Logging in...");
 
-    const result: any = await SignInAction(data);
-    if (result.success) {
+    try {
+      const result = await SignInAction(data);
+      if (result.success) {
+        toast.dismiss();
+        toast.success(result.message);
+        
+        // Sign in the user after successful authentication
+        const signInResult = await signIn('credentials', {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
+
+        if (signInResult?.error) {
+          toast.error("Error signing in");
+        } else {
+          router.push("/");
+        }
+      } else {
+        toast.dismiss();
+        toast.error(result.message);
+      }
+    } catch (error) {
       toast.dismiss();
-      toast.success(result.message);
-      router.push("/");
-    } else {
-      toast.dismiss();
-      toast.error(result.message);
+      toast.error("An error occurred during login");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
