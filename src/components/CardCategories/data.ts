@@ -7,7 +7,7 @@ import { CardCategory3Props } from "./CardCategory3";
 export const CATS_DISCOVER: CardCategory3Props[] = [
   {
     name: "Kategori",
-    desc: "Magnet <br /> Neodymium",
+    desc: "Rare <br /> Earth Magnets",
     featuredImage: img1,
     color: "bg-yellow-50",
   },
@@ -19,13 +19,13 @@ export const CATS_DISCOVER: CardCategory3Props[] = [
   },
   {
     name: "Kategori",
-    desc: "Magnetic <br /> Konveyor",
+    desc: "Magnetic <br /> Assembly",
     featuredImage: img3,
     color: "bg-blue-50",
   },
   {
     name: "Kategori",
-    desc: "Aksesoris <br /> Magnet",
+    desc: "Flexible <br /> Magnet",
     featuredImage: img4,
     color: "bg-green-50",
   },
