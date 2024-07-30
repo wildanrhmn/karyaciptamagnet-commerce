@@ -21,7 +21,7 @@ export async function SignInAction(formData: IFormLoginInput) {
         case "CredentialsSignin":
           return { success: false, message: "Invalid email or password" };
         default:
-          return { success: false, message: "Unknown error." };
+          return { success: false, message: "Invalid email or password" };
       }
     }
   }

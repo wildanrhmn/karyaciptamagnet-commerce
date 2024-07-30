@@ -56,14 +56,19 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
             data: {
               email: user?.email,
               name: user?.name,
-              image: JSON.stringify({url: user?.image, public_id: ''})
+              image: JSON.stringify({url: user?.image, public_id: ''}),
+              emailVerified: new Date()
             }
           });
         } else if (existingUser) {
-          const updateData: { name?: string; image?: string } = {};
+          const updateData: { name?: string; image?: string; emailVerified?: Date } = {};
           
           if (!existingUser.name) {
             updateData.name = user?.name!;
+          }
+
+          if (!existingUser.emailVerified) {
+            updateData.emailVerified = new Date()
           }
           
           if (!existingUser.image) {

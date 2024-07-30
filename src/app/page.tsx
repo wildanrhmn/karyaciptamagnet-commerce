@@ -50,8 +50,8 @@ async function PageHome() {
         </div>
 
         <SectionSliderProductCard
-          heading="Best Sellers"
-          subHeading="Best selling of the month"
+          heading="Produk Terlaris"
+          subHeading="Produk terlaris di toko kami"
         />
 
         <hr className="border-slate-200 dark:border-slate-700" />
