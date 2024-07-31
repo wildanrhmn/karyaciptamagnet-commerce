@@ -5,7 +5,6 @@ import LikeButton from "@/components/LikeButton";
 import { StarIcon } from "@heroicons/react/24/solid";
 import BagIcon from "@/components/BagIcon";
 import NcInputNumber from "@/components/NcInputNumber";
-import { PRODUCTS } from "@/data/data";
 import {
   NoSymbolIcon,
   ClockIcon,
@@ -14,9 +13,6 @@ import {
 import IconDiscount from "@/components/IconDiscount";
 import Prices from "@/components/Prices";
 import toast from "react-hot-toast";
-import detail1JPG from "@/images/products/detail1.jpg";
-import detail2JPG from "@/images/products/detail2.jpg";
-import detail3JPG from "@/images/products/detail3.jpg";
 import NotifyAddTocart from "./NotifyAddTocart";
 import AccordionInfo from "@/components/AccordionInfo";
 import Image from "next/image";
@@ -24,130 +20,27 @@ import Link from "next/link";
 
 export interface ProductQuickViewProps {
   className?: string;
+  product: any;
 }
 
-const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
-  const { sizes, variants, status, allOfSizes } = PRODUCTS[0];
-  const LIST_IMAGES_DEMO = [detail1JPG, detail2JPG, detail3JPG];
+const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "", product }) => {
 
-  const [variantActive, setVariantActive] = useState(0);
-  const [sizeSelected, setSizeSelected] = useState(sizes ? sizes[0] : "");
   const [qualitySelected, setQualitySelected] = useState(1);
 
   const notifyAddTocart = () => {
     toast.custom(
       (t) => (
         <NotifyAddTocart
-          productImage={LIST_IMAGES_DEMO[0]}
-          qualitySelected={qualitySelected}
+          productImage={product?.ProductImages[0]?.imageUrl}
           show={t.visible}
-          sizeSelected={sizeSelected}
-          variantActive={variantActive}
+          name={product?.name}
+          productCategory={product?.productCategory}
+          productSubCategory={product?.productSubCategory}
+          priceRange={product?.priceRange}
+          quantity={qualitySelected}
         />
       ),
       { position: "top-right", id: "nc-product-notify", duration: 3000 }
-    );
-  };
-
-  const renderVariants = () => {
-    if (!variants || !variants.length) {
-      return null;
-    }
-
-    return (
-      <div>
-        <label className="rtl:text-right block" htmlFor="">
-          <span className="text-sm font-medium">
-            Color:
-            <span className="ms-1 font-semibold">
-              {variants[variantActive].name}
-            </span>
-          </span>
-        </label>
-        <div className="flex mt-2.5">
-          {variants.map((variant, index) => (
-            <div
-              key={index}
-              onClick={() => setVariantActive(index)}
-              className={`relative flex-1 max-w-[75px] h-10 rounded-full border-2 cursor-pointer ${
-                variantActive === index
-                  ? "border-primary-6000 dark:border-primary-500"
-                  : "border-transparent"
-              }`}
-            >
-              <div
-                className="absolute inset-0.5 rounded-full overflow-hidden z-0 bg-cover"
-                style={{
-                  backgroundImage: `url(${
-                    // @ts-ignore
-                    typeof variant.thumbnail?.src === "string"
-                      ? // @ts-ignore
-                        variant.thumbnail?.src
-                      : typeof variant.thumbnail === "string"
-                      ? variant.thumbnail
-                      : ""
-                  })`,
-                }}
-              ></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderSizeList = () => {
-    if (!allOfSizes || !sizes || !sizes.length) {
-      return null;
-    }
-    return (
-      <div>
-        <div className="flex justify-between font-medium text-sm">
-          <label htmlFor="">
-            <span className="">
-              Size:
-              <span className="ms-1 font-semibold">{sizeSelected}</span>
-            </span>
-          </label>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="##"
-            className="text-primary-6000 hover:text-primary-500"
-          >
-            See sizing chart
-          </a>
-        </div>
-        <div className="grid grid-cols-5 sm:grid-cols-7 gap-2 mt-2.5">
-          {allOfSizes.map((size, index) => {
-            const isActive = size === sizeSelected;
-            const sizeOutStock = !sizes.includes(size);
-            return (
-              <div
-                key={index}
-                className={`relative h-10 sm:h-11 rounded-2xl border flex items-center justify-center 
-                text-sm sm:text-base uppercase font-semibold select-none overflow-hidden z-0 ${
-                  sizeOutStock
-                    ? "text-opacity-20 dark:text-opacity-20 cursor-not-allowed"
-                    : "cursor-pointer"
-                } ${
-                  isActive
-                    ? "bg-primary-6000 border-primary-6000 text-white hover:bg-primary-6000"
-                    : "border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
-                }`}
-                onClick={() => {
-                  if (sizeOutStock) {
-                    return;
-                  }
-                  setSizeSelected(size);
-                }}
-              >
-                {size}
-              </div>
-            );
-          })}
-        </div>
-      </div>
     );
   };
 
@@ -155,6 +48,7 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
     if (!status) {
       return null;
     }
+    
     const CLASSES =
       "absolute top-3 start-3 px-2.5 py-1.5 text-xs bg-white dark:bg-slate-900 nc-shadow-lg rounded-full flex items-center justify-center text-slate-700 text-slate-900 dark:text-slate-300";
     if (status === "New in") {
@@ -198,44 +92,22 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
         {/* ---------- 1 HEADING ----------  */}
         <div>
           <h2 className="text-2xl font-semibold hover:text-primary-6000 transition-colors">
-            <Link href="/product-detail">Heavy Weight Shoes</Link>
+            <Link href="/product-detail">{product?.name}</Link>
           </h2>
 
           <div className="flex justify-start rtl:justify-end items-center mt-5 space-x-4 sm:space-x-5 rtl:space-x-reverse">
             {/* <div className="flex text-xl font-semibold">$112.00</div> */}
-            <Prices
-              contentClass="py-1 px-2 md:py-1.5 md:px-3 text-lg font-semibold"
-              price={112}
-            />
-
-            <div className="h-6 border-s border-slate-300 dark:border-slate-700"></div>
-
-            <div className="flex items-center">
-              <Link
-                href="/product-detail"
-                className="flex items-center text-sm font-medium"
-              >
-                <StarIcon className="w-5 h-5 pb-[1px] text-yellow-400" />
-                <div className="ms-1.5 flex">
-                  <span>4.9</span>
-                  <span className="block mx-2">·</span>
-                  <span className="text-slate-600 dark:text-slate-400 underline">
-                    142 reviews
-                  </span>
-                </div>
-              </Link>
-              <span className="hidden sm:block mx-2.5">·</span>
-              <div className="hidden sm:flex items-center text-sm">
-                <SparklesIcon className="w-3.5 h-3.5" />
-                <span className="ms-1 leading-none">{status}</span>
-              </div>
-            </div>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-4000">
+              <span>
+                {product?.productCategory.name}
+              </span>
+              <span className="mx-2 border-s border-slate-200 dark:border-slate-700 h-4"></span>
+              <span>
+                    {product?.productSubCategory.name}
+              </span>
+            </p>
           </div>
         </div>
-
-        {/* ---------- 3 VARIANTS AND SIZE LIST ----------  */}
-        <div className="">{renderVariants()}</div>
-        <div className="">{renderSizeList()}</div>
 
         {/*  ---------- 4  QTY AND ADD TO CART BUTTON */}
         <div className="flex space-x-3.5 rtl:space-x-reverse">
@@ -250,7 +122,7 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
             onClick={notifyAddTocart}
           >
             <BagIcon className="hidden sm:inline-block w-5 h-5 mb-0.5" />
-            <span className="ms-3">Add to cart</span>
+            <span className="ms-3">Tambahkan ke Keranjang</span>
           </ButtonPrimary>
         </div>
 
@@ -264,22 +136,7 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
             {
               name: "Description",
               content:
-                "Fashion is a form of self-expression and autonomy at a particular period and place and in a specific context, of clothing, footwear, lifestyle, accessories, makeup, hairstyle, and body posture.",
-            },
-            {
-              name: "Features",
-              content: `<ul class="list-disc list-inside leading-7">
-            <li>Material: 43% Sorona Yarn + 57% Stretch Polyester</li>
-            <li>
-             Casual pants waist with elastic elastic inside
-            </li>
-            <li>
-              The pants are a bit tight so you always feel comfortable
-            </li>
-            <li>
-              Excool technology application 4-way stretch
-            </li>
-          </ul>`,
+                product?.description,
             },
           ]}
         />
@@ -297,7 +154,7 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
           <div className="relative">
             <div className="aspect-w-16 aspect-h-16">
               <Image
-                src={LIST_IMAGES_DEMO[0]}
+                src={product?.ProductImages[0]?.imageUrl}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="w-full rounded-xl object-cover"
@@ -308,15 +165,15 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "" }) => {
             {/* STATUS */}
             {renderStatus()}
             {/* META FAVORITES */}
-            <LikeButton className="absolute end-3 top-3 " />
+            <LikeButton className="absolute end-3 top-3 " productId={product?.productId} />
           </div>
           <div className="hidden lg:grid grid-cols-2 gap-3 mt-3 sm:gap-6 sm:mt-6 xl:gap-5 xl:mt-5">
-            {[LIST_IMAGES_DEMO[1], LIST_IMAGES_DEMO[2]].map((item, index) => {
+            {product?.ProductImages?.slice(1, 3).map((item: any, index: any) => {
               return (
                 <div key={index} className="aspect-w-3 aspect-h-4">
                   <Image
                     fill
-                    src={item}
+                    src={item?.imageUrl}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="w-full rounded-xl object-cover"
                     alt="product detail 1"

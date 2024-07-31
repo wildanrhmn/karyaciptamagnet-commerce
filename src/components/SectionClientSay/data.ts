@@ -17,4 +17,10 @@ export const DEMO_DATA = [
     content:
       "Kualitas produk Anda sangat kompetitif di pasar. Harga yang Anda berikan sangat terjangkau dan akan kami beli kembali.",
   },
+  {
+    id: 4,
+    clientName: "Natannael Agape",
+    content:
+      "Kami sangat menyukainya, karena kami merasa produk yang kami beli dari pemasok ini sangat berkualitas dan berkualitas tinggi.",
+  },
 ];

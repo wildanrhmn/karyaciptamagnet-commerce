@@ -1,11 +1,11 @@
 "use client";
 
-import React, { FC, useEffect, useId, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Heading from "@/components/Heading/Heading";
 // @ts-ignore
 import Glide from "@glidejs/glide/dist/glide.esm";
 import ProductCard from "./ProductCard";
-import { Product, PRODUCTS } from "@/data/data";
+import axios from "axios";
 
 export interface SectionSliderProductCardProps {
   className?: string;
@@ -14,7 +14,6 @@ export interface SectionSliderProductCardProps {
   headingFontClassName?: string;
   headingClassName?: string;
   subHeading?: string;
-  data?: Product[];
 }
 
 const SectionSliderProductCard: FC<SectionSliderProductCardProps> = ({
@@ -24,16 +23,26 @@ const SectionSliderProductCard: FC<SectionSliderProductCardProps> = ({
   headingClassName,
   heading,
   subHeading = "REY backpacks & bags",
-  data = PRODUCTS.filter((_, i) => i < 8 && i > 2),
 }) => {
+  const [topSaleProducts, setTopSaleProducts] = useState([]);
   const sliderRef = useRef(null);
-
-  //
   const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('/api/products/topsale');
+        setTopSaleProducts(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
     const OPTIONS: Partial<Glide.Options> = {
-      // direction: document.querySelector("html")?.getAttribute("dir") || "ltr",
       perView: 4,
       gap: 32,
       bound: true,
@@ -61,13 +70,16 @@ const SectionSliderProductCard: FC<SectionSliderProductCardProps> = ({
     };
     if (!sliderRef.current) return;
 
-    let slider = new Glide(sliderRef.current, OPTIONS);
-    slider.mount();
-    setIsShow(true);
-    return () => {
-      slider.destroy();
-    };
-  }, [sliderRef]);
+    if (topSaleProducts.length > 0 && sliderRef.current) {
+      const slider = new Glide(sliderRef.current, OPTIONS);
+      slider.mount();
+      setIsShow(true);
+      return () => {
+        slider.destroy();
+      };
+    }
+  }, [sliderRef, topSaleProducts]);
+  
 
   return (
     <div className={`nc-SectionSliderProductCard ${className}`}>
@@ -78,11 +90,11 @@ const SectionSliderProductCard: FC<SectionSliderProductCardProps> = ({
           rightDescText={subHeading}
           hasNextPrev
         >
-          {heading || `New Arrivals`}
+          {heading}
         </Heading>
         <div className="glide__track" data-glide-el="track">
           <ul className="glide__slides">
-            {data.map((item, index) => (
+            {topSaleProducts.map((item, index) => (
               <li key={index} className={`glide__slide ${itemClassName}`}>
                 <ProductCard data={item} />
               </li>

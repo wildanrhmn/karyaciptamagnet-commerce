@@ -1,26 +1,27 @@
 import React, { FC } from "react";
 import { Transition } from "@/app/headlessui";
 import Prices from "@/components/Prices";
-import { PRODUCTS } from "@/data/data";
 import Image, { StaticImageData } from "next/image";
 
 interface Props {
   show: boolean;
   productImage: string | StaticImageData;
-  variantActive: number;
-  sizeSelected: string;
-  qualitySelected: number;
+  name: string;
+  productCategory: string;
+  productSubCategory: string;
+  priceRange: string;
+  quantity: number;
 }
 
 const NotifyAddTocart: FC<Props> = ({
   show,
   productImage,
-  variantActive,
-  qualitySelected,
-  sizeSelected,
+  name,
+  productCategory,
+  productSubCategory,
+  priceRange,
+  quantity,
 }) => {
-  const { name, price, variants } = PRODUCTS[0];
-
   const renderProductCartOnNotify = () => {
     return (
       <div className="flex ">
@@ -41,24 +42,24 @@ const NotifyAddTocart: FC<Props> = ({
                 <h3 className="text-base font-medium ">{name}</h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   <span>
-                    {variants ? variants[variantActive].name : `Natural`}
+                    {productCategory}
                   </span>
                   <span className="mx-2 border-l border-slate-200 dark:border-slate-700 h-4"></span>
-                  <span>{sizeSelected || "XL"}</span>
+                  <span>{productSubCategory}</span>
                 </p>
               </div>
-              <Prices price={price} className="mt-0.5" />
+              <Prices price={priceRange} className="mt-0.5" />
             </div>
           </div>
           <div className="flex flex-1 items-end justify-between text-sm">
-            <p className="text-gray-500 dark:text-slate-400">{`Qty ${qualitySelected}`}</p>
+            <p className="text-gray-500 dark:text-slate-400">{`Qty ${quantity}`}</p>
 
             <div className="flex">
               <button
                 type="button"
                 className="font-medium text-primary-6000 dark:text-primary-500 "
               >
-                View cart
+                Lihat Keranjang
               </button>
             </div>
           </div>

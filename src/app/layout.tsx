@@ -9,6 +9,8 @@ import SiteHeader from "@/app/SiteHeader";
 import AuthWrapper from "@/auth/auth-wrapper";
 import CommonClient from "./CommonClient";
 
+import { WishlistProvider } from "@/context/WishlistContext";
+
 const poppins = Poppins({
   subsets: ["latin"],
   display: "swap",
@@ -40,7 +42,9 @@ export default function RootLayout({
       <body className="bg-white text-base dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200">
         <AuthWrapper>
           <SiteHeader />
-          {children}
+          <WishlistProvider>
+            {children}
+          </WishlistProvider>
           <CommonClient />
           <Footer />
         </AuthWrapper>

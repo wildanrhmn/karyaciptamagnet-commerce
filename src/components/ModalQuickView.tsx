@@ -4,19 +4,19 @@ import { Dialog, Transition } from "@/app/headlessui";
 import React, { FC, Fragment } from "react";
 import ButtonClose from "@/shared/ButtonClose/ButtonClose";
 import ProductQuickView from "./ProductQuickView";
-import ProductQuickView2 from "./ProductQuickView2";
 import { usePathname } from "next/navigation";
 
 export interface ModalQuickViewProps {
+  product: any;
   show: boolean;
   onCloseModalQuickView: () => void;
 }
 
 const ModalQuickView: FC<ModalQuickViewProps> = ({
+  product,
   show,
   onCloseModalQuickView,
 }) => {
-  const pathname = usePathname();
 
   return (
     <Transition appear show={show} as={Fragment}>
@@ -38,7 +38,6 @@ const ModalQuickView: FC<ModalQuickViewProps> = ({
             <Dialog.Overlay className="fixed inset-0 bg-black/40 dark:bg-black/70" />
           </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
           <span className="inline-block align-middle" aria-hidden="true">
             &#8203;
           </span>
@@ -61,11 +60,7 @@ const ModalQuickView: FC<ModalQuickViewProps> = ({
                 </span>
 
                 <div className="flex-1 overflow-y-auto rounded-xl hiddenScrollbar">
-                  {pathname.includes("/home-2") ? (
-                    <ProductQuickView2 />
-                  ) : (
-                    <ProductQuickView />
-                  )}
+                    <ProductQuickView product={product} />
                 </div>
               </div>
             </div>
