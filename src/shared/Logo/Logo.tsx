@@ -17,18 +17,16 @@ const Logo: React.FC<LogoProps> = ({
       href="/"
       className={`ttnc-logo inline-block text-slate-600 ${className}`}
     >
-      {/* THIS USE FOR MY CLIENT */}
-      {/* PLEASE UN COMMENT BELLOW CODE AND USE IT */}
       {img ? (
         <div className="flex items-center gap-2">        
           <Image
             className={`block h-8 sm:h-12 w-auto`}
             src={img}
             alt="Logo"
-            sizes="200px"
+            sizes="230px"
             priority
           />
-          <span className={`dark:text-[#F9FAFB] text-[#26303E] font-semibold text-md`}>Karya Cipta Magnet</span>
+          <span className={`dark:text-[#F9FAFB] text-[#26303E] font-semibold text-md hidden sm:block`}>Karya Cipta Magnet</span>
         </div>
       ) : (
         "Logo Here"

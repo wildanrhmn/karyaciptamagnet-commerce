@@ -1,12 +1,10 @@
 import rightImg from "@/images/hero-right1.png";
-import React, { FC } from "react";
-import SectionFounder from "./SectionFounder";
+import React from "react";
 import SectionStatistic from "./SectionStatistic";
 import BgGlassmorphism from "@/components/BgGlassmorphism/BgGlassmorphism";
 import BackgroundSection from "@/components/BackgroundSection/BackgroundSection";
 import SectionHero from "./SectionHero";
 import SectionClientSay from "@/components/SectionClientSay/SectionClientSay";
-import SectionPromo3 from "@/components/SectionPromo3";
 
 const PageAbout = ({}) => {
   return (
@@ -17,20 +15,18 @@ const PageAbout = ({}) => {
       <div className="container py-16 lg:py-28 space-y-16 lg:space-y-28">
         <SectionHero
           rightImg={rightImg}
-          heading="👋 About Us."
+          heading="👋 Tentang Kami."
           btnText=""
-          subHeading="We’re impartial and independent, and every day we create distinctive, world-class programmes and content which inform, educate and entertain millions of people in the around the world."
+          subHeading="CV. Karya Cipta Magnet (KCM) adalah Specialist Permanent Magnet Trap yang berada di Kec Gunung sindur, Bogor, Jawa Barat. KCM adalah salah satu perusahaan yang bergerak dalam usaha rekayasa mekanik maupun supplier."
         />
 
-        <SectionFounder />
+        {/* <SectionFounder /> */}
         <div className="relative py-16">
           <BackgroundSection />
           <SectionClientSay />
         </div>
 
         <SectionStatistic />
-
-        <SectionPromo3 />
       </div>
     </div>
   );
