@@ -16,6 +16,17 @@ export async function GET(
                 ProductImages: true,
                 productCategory: true,
                 productSubCategory: true,
+                productReviews: {
+                    include: {
+                        user: {
+                            select: {
+                                name: true,
+                                username: true,
+                                image: true,
+                            },
+                        },
+                    },
+                },
             },
         });
 

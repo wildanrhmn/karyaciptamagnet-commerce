@@ -44,7 +44,9 @@ export default function CollectionPage({
                 subcategory={subcategory} 
                 onTotalPagesChange={handleTotalPagesChange}
               />
-            <Pagination totalPages={totalPages} />
+              <div className="flex justify-center">
+                <Pagination totalPages={totalPages} />
+              </div>
           </main>
         </div>
 

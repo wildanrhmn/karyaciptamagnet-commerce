@@ -26,7 +26,6 @@ export function ProductList({
       const data = await response.json();
       setProducts(data.products);
       onTotalPagesChange(data.totalPages);
-      console.log('Fetched total pages:', data.totalPages); // Debug log
     };
 
     fetchProducts();

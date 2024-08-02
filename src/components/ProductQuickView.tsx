@@ -2,16 +2,9 @@
 import React, { FC, useState } from "react";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import LikeButton from "@/components/LikeButton";
-import { StarIcon } from "@heroicons/react/24/solid";
 import BagIcon from "@/components/BagIcon";
 import NcInputNumber from "@/components/NcInputNumber";
-import {
-  NoSymbolIcon,
-  ClockIcon,
-  SparklesIcon,
-} from "@heroicons/react/24/outline";
-import IconDiscount from "@/components/IconDiscount";
-import Prices from "@/components/Prices";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import NotifyAddTocart from "./NotifyAddTocart";
 import AccordionInfo from "@/components/AccordionInfo";
@@ -23,8 +16,10 @@ export interface ProductQuickViewProps {
   product: any;
 }
 
-const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "", product }) => {
-
+const ProductQuickView: FC<ProductQuickViewProps> = ({
+  className = "",
+  product,
+}) => {
   const [qualitySelected, setQualitySelected] = useState(1);
 
   const notifyAddTocart = () => {
@@ -45,41 +40,21 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "", product }
   };
 
   const renderStatus = () => {
-    if (!status) {
-      return null;
-    }
-    
     const CLASSES =
-      "absolute top-3 start-3 px-2.5 py-1.5 text-xs bg-white dark:bg-slate-900 nc-shadow-lg rounded-full flex items-center justify-center text-slate-700 text-slate-900 dark:text-slate-300";
-    if (status === "New in") {
+      "absolute top-3 left-3 px-2.5 py-1.5 text-xs bg-white dark:bg-slate-900 nc-shadow-lg rounded-full flex items-center justify-center text-slate-700 text-slate-900 dark:text-slate-300";
+    if (product?.stock > 0) {
       return (
         <div className={CLASSES}>
           <SparklesIcon className="w-3.5 h-3.5" />
-          <span className="ms-1 leading-none">{status}</span>
+          <span className="ml-1 leading-none">{`Stok Tersedia`}</span>
         </div>
       );
     }
-    if (status === "50% Discount") {
+    if (product?.stock === 0) {
       return (
         <div className={CLASSES}>
-          <IconDiscount className="w-3.5 h-3.5" />
-          <span className="ms-1 leading-none">{status}</span>
-        </div>
-      );
-    }
-    if (status === "Sold Out") {
-      return (
-        <div className={CLASSES}>
-          <NoSymbolIcon className="w-3.5 h-3.5" />
-          <span className="ms-1 leading-none">{status}</span>
-        </div>
-      );
-    }
-    if (status === "limited edition") {
-      return (
-        <div className={CLASSES}>
-          <ClockIcon className="w-3.5 h-3.5" />
-          <span className="ms-1 leading-none">{status}</span>
+          <SparklesIcon className="w-3.5 h-3.5" />
+          <span className="ml-1 leading-none">{`Stok Habis`}</span>
         </div>
       );
     }
@@ -92,19 +67,15 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "", product }
         {/* ---------- 1 HEADING ----------  */}
         <div>
           <h2 className="text-2xl font-semibold hover:text-primary-6000 transition-colors">
-            <Link href="/product-detail">{product?.name}</Link>
+            <Link href={`/product/${product?.slug}`}>{product?.name}</Link>
           </h2>
 
           <div className="flex justify-start rtl:justify-end items-center mt-5 space-x-4 sm:space-x-5 rtl:space-x-reverse">
             {/* <div className="flex text-xl font-semibold">$112.00</div> */}
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-4000">
-              <span>
-                {product?.productCategory.name}
-              </span>
+              <span>{product?.productCategory.name}</span>
               <span className="mx-2 border-s border-slate-200 dark:border-slate-700 h-4"></span>
-              <span>
-                    {product?.productSubCategory.name}
-              </span>
+              <span>{product?.productSubCategory.name}</span>
             </p>
           </div>
         </div>
@@ -131,15 +102,7 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "", product }
         {/*  */}
 
         {/* ---------- 5 ----------  */}
-        <AccordionInfo
-          data={[
-            {
-              name: "Description",
-              content:
-                product?.description,
-            },
-          ]}
-        />
+        <AccordionInfo name="Deskripsi Produk" content={product?.smallDescription}/>
       </div>
     );
   };
@@ -161,26 +124,28 @@ const ProductQuickView: FC<ProductQuickViewProps> = ({ className = "", product }
                 alt="product detail 1"
               />
             </div>
-
-            {/* STATUS */}
             {renderStatus()}
-            {/* META FAVORITES */}
-            <LikeButton className="absolute end-3 top-3 " productId={product?.productId} />
+            <LikeButton
+              className="absolute end-3 top-3 "
+              productId={product?.productId}
+            />
           </div>
           <div className="hidden lg:grid grid-cols-2 gap-3 mt-3 sm:gap-6 sm:mt-6 xl:gap-5 xl:mt-5">
-            {product?.ProductImages?.slice(1, 3).map((item: any, index: any) => {
-              return (
-                <div key={index} className="aspect-w-3 aspect-h-4">
-                  <Image
-                    fill
-                    src={item?.imageUrl}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="w-full rounded-xl object-cover"
-                    alt="product detail 1"
-                  />
-                </div>
-              );
-            })}
+            {product?.ProductImages?.slice(1, 3).map(
+              (item: any, index: any) => {
+                return (
+                  <div key={index} className="aspect-w-3 aspect-h-4">
+                    <Image
+                      fill
+                      src={item?.imageUrl}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="w-full rounded-xl object-cover"
+                      alt="product detail 1"
+                    />
+                  </div>
+                );
+              }
+            )}
           </div>
         </div>
 

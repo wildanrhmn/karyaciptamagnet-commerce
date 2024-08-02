@@ -12,42 +12,32 @@ export interface WidgetFooterMenu {
 const widgetMenus: WidgetFooterMenu[] = [
   {
     id: "5",
-    title: "Getting started",
+    title: "Karya Cipta Magnet",
     menus: [
-      { href: "/", label: "Release Notes" },
-      { href: "/", label: "Upgrade Guide" },
-      { href: "/", label: "Browser Support" },
-      { href: "/", label: "Dark Mode" },
+      { href: "/", label: "Beranda" },
+      { href: "/collection", label: "Produk" },
+      { href: "/about", label: "Tentang Kami" },
+      { href: "/contact", label: "Kontak" },
     ],
   },
   {
     id: "1",
-    title: "Explore",
+    title: "Kategori",
     menus: [
-      { href: "/", label: "Prototyping" },
-      { href: "/", label: "Design systems" },
-      { href: "/", label: "Pricing" },
-      { href: "/", label: "Security" },
+      { href: "/", label: "Rare Earth Magnets" },
+      { href: "/", label: "Flexible Magnets" },
+      { href: "/", label: "Magnetic Assembly" },
+      { href: "/", label: "Magnetic Separator" },
     ],
   },
   {
     id: "2",
-    title: "Resources",
+    title: "Bantuan dan Panduan",
     menus: [
-      { href: "/", label: "Best practices" },
-      { href: "/", label: "Support" },
-      { href: "/", label: "Developers" },
-      { href: "/", label: "Learn design" },
-    ],
-  },
-  {
-    id: "4",
-    title: "Community",
-    menus: [
-      { href: "/", label: "Discussion Forums" },
-      { href: "/", label: "Code of Conduct" },
-      { href: "/", label: "Contributing" },
-      { href: "/", label: "API Reference" },
+      { href: "/", label: "Syarat dan Ketentuan" },
+      { href: "/", label: "Kebijakan Privasi" },
+      { href: "/", label: "Masuk" },
+      { href: "/", label: "Daftar" },
     ],
   },
 ];

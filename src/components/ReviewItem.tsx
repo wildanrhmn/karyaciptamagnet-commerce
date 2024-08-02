@@ -2,31 +2,16 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import React, { FC } from "react";
 import Avatar from "@/shared/Avatar/Avatar";
 
-interface ReviewItemDataType {
-  name: string;
-  avatar?: string;
-  date: string;
-  comment: string;
-  starPoint: number;
-}
-
 export interface ReviewItemProps {
   className?: string;
-  data?: ReviewItemDataType;
+  data?: any;
 }
-
-const DEMO_DATA: ReviewItemDataType = {
-  name: "Cody Fisher",
-  date: "May 20, 2021",
-  comment:
-    "Very nice feeling sweater. I like it better than a regular hoody because it is tailored to be a slimmer fit. Perfect for going out when you want to stay comfy. The head opening is a little tight which makes it a little.",
-  starPoint: 5,
-};
 
 const ReviewItem: FC<ReviewItemProps> = ({
   className = "",
-  data = DEMO_DATA,
+  data,
 }) => {
+  const image = data.user.image ? JSON.parse(data.user.image) : null;
   return (
     <div
       className={`nc-ReviewItem flex flex-col ${className}`}
@@ -37,30 +22,28 @@ const ReviewItem: FC<ReviewItemProps> = ({
           <Avatar
             sizeClass="h-10 w-10 text-lg"
             radius="rounded-full"
-            userName={data.name}
-            imgUrl={data.avatar}
+            userName={data.user.name ? data.user.name : data.user.username}
+            imgUrl={image ? image.url : null}
           />
         </div>
 
         <div className="flex-1 flex justify-between">
           <div className="text-sm sm:text-base">
-            <span className="block font-semibold">{data.name}</span>
+            <span className="block font-semibold">{data.user.name ? data.user.name : data.user.username}</span>
             <span className="block mt-0.5 text-slate-500 dark:text-slate-400 text-sm">
-              {data.date}
+              {data.createdAt.split('T')[0]}
             </span>
           </div>
 
           <div className="mt-0.5 flex text-yellow-500">
-            <StarIcon className="w-5 h-5" />
-            <StarIcon className="w-5 h-5" />
-            <StarIcon className="w-5 h-5" />
-            <StarIcon className="w-5 h-5" />
-            <StarIcon className="w-5 h-5" />
+            { Array.from({ length: data.rating }, (_, index) => (
+                <StarIcon key={index} className="w-5 h-5" />
+            )) }
           </div>
         </div>
       </div>
       <div className="mt-4 prose prose-sm sm:prose dark:prose-invert sm:max-w-2xl">
-        <p className="text-slate-600 dark:text-slate-300">{data.comment}</p>
+        <p className="text-slate-600 dark:text-slate-300">{data.review}</p>
       </div>
     </div>
   );

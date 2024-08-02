@@ -11,7 +11,8 @@ model Product {
   productId     String         @id @default(cuid())
   name          String
   slug          String         @unique
-  description   String         @db.Text
+  description   String         @db.VarChar(10000)
+  smallDescription String
   weightRange   String
   priceRange    String
   productCategoryId String
@@ -23,6 +24,7 @@ model Product {
   wishlist      UserWishlist[]
   ProductImages ProductImage[]
   CartItem      CartItem[]
+  productReviews ProductReview[]
   productCategory ProductCategory @relation(fields: [productCategoryId], references: [productCategoryId])
   productSubCategory ProductSubCategory @relation(fields: [productSubCategoryId], references: [productSubCategoryId])
 
@@ -30,6 +32,20 @@ model Product {
   @@index([productCategoryId])
   @@index([productSubCategoryId])
   @@map("products")
+}
+
+model ProductReview {
+  productReviewId String @id @default(cuid())
+  productId String
+  userId String
+  review String
+  rating Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("productreviews")
 }
 
 model ProductCategory {
@@ -140,6 +156,7 @@ model User {
   updatedAt     DateTime   @updatedAt
   scope         String?    @default("member")
   wishlist      UserWishlist[]
+  productReviews ProductReview[]
   accounts      Account[]
   sessions      Session[]
   cart          Cart[]
@@ -164,6 +181,7 @@ model UserWishlist {
   @@index([userId, productId])
   @@map("userwishlists")
 }
+
 
 model Addresses {
   addressId    String    @id @default(cuid())
