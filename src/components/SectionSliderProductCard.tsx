@@ -22,7 +22,7 @@ const SectionSliderProductCard: FC<SectionSliderProductCardProps> = ({
   headingFontClassName,
   headingClassName,
   heading,
-  subHeading = "REY backpacks & bags",
+  subHeading = "",
 }) => {
   const [topSaleProducts, setTopSaleProducts] = useState([]);
   const sliderRef = useRef(null);

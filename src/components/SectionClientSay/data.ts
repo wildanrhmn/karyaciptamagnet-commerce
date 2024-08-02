@@ -23,4 +23,10 @@ export const DEMO_DATA = [
     content:
       "Kami sangat menyukainya, karena kami merasa produk yang kami beli dari pemasok ini sangat berkualitas dan berkualitas tinggi.",
   },
+  {
+    id: 5,
+    clientName: "Revo Arya",
+    content:
+      "Produk yang kami terima dari perusahaan ini selalu memenuhi standar kualitas tinggi. Layanan pelanggan mereka juga sangat responsif dan membantu.",
+  },
 ];

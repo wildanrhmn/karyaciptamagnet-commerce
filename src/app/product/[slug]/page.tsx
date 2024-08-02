@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { useState, useEffect } from "react";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import LikeButton from "@/components/LikeButton";
 import { StarIcon } from "@heroicons/react/24/solid";
@@ -27,19 +27,32 @@ import ModalViewAllReviews from "./ModalViewAllReviews";
 import NotifyAddTocart from "@/components/NotifyAddTocart";
 import Image from "next/image";
 import AccordionInfo from "@/components/AccordionInfo";
+import axios from "axios";
 
 const LIST_IMAGES_DEMO = [detail1JPG, detail2JPG, detail3JPG];
 
-const ProductDetailPage = () => {
+const ProductDetailPage = ({ params }: { params: { slug: string } }) => {
   const { sizes, variants, status, allOfSizes, image } = PRODUCTS[0];
-  //
+
+  const [productDetail, setProductDetail] = useState({});
   const [variantActive, setVariantActive] = useState(0);
   const [sizeSelected, setSizeSelected] = useState(sizes ? sizes[0] : "");
   const [qualitySelected, setQualitySelected] = useState(1);
   const [isOpenModalViewAllReviews, setIsOpenModalViewAllReviews] =
     useState(false);
 
-  //
+  useEffect(() => {
+    const fetchProductDetail = async () => {
+      try {
+        const response = await axios.get(`/api/product/${params.slug}`);
+        setProductDetail(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProductDetail();
+  }, [params.slug]);
+
   const notifyAddTocart = () => {
     toast.custom(
       (t) => (
@@ -55,108 +68,6 @@ const ProductDetailPage = () => {
     );
   };
 
-  const renderVariants = () => {
-    if (!variants || !variants.length) {
-      return null;
-    }
-
-    return (
-      <div>
-        <label htmlFor="">
-          <span className="text-sm font-medium">
-            Color:
-            <span className="ml-1 font-semibold">
-              {variants[variantActive].name}
-            </span>
-          </span>
-        </label>
-        <div className="flex mt-3">
-          {variants.map((variant, index) => (
-            <div
-              key={index}
-              onClick={() => setVariantActive(index)}
-              className={`relative flex-1 max-w-[75px] h-10 sm:h-11 rounded-full border-2 cursor-pointer ${
-                variantActive === index
-                  ? "border-primary-6000 dark:border-primary-500"
-                  : "border-transparent"
-              }`}
-            >
-              <div
-                className="absolute inset-0.5 rounded-full overflow-hidden z-0 object-cover bg-cover"
-                style={{
-                  backgroundImage: `url(${
-                    // @ts-ignore
-                    typeof variant.thumbnail?.src === "string"
-                      ? // @ts-ignore
-                        variant.thumbnail?.src
-                      : typeof variant.thumbnail === "string"
-                      ? variant.thumbnail
-                      : ""
-                  })`,
-                }}
-              ></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderSizeList = () => {
-    if (!allOfSizes || !sizes || !sizes.length) {
-      return null;
-    }
-    return (
-      <div>
-        <div className="flex justify-between font-medium text-sm">
-          <label htmlFor="">
-            <span className="">
-              Size:
-              <span className="ml-1 font-semibold">{sizeSelected}</span>
-            </span>
-          </label>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="##"
-            className="text-primary-6000 hover:text-primary-500"
-          >
-            See sizing chart
-          </a>
-        </div>
-        <div className="grid grid-cols-5 sm:grid-cols-7 gap-2 mt-3">
-          {allOfSizes.map((size, index) => {
-            const isActive = size === sizeSelected;
-            const sizeOutStock = !sizes.includes(size);
-            return (
-              <div
-                key={index}
-                className={`relative h-10 sm:h-11 rounded-2xl border flex items-center justify-center 
-                text-sm sm:text-base uppercase font-semibold select-none overflow-hidden z-0 ${
-                  sizeOutStock
-                    ? "text-opacity-20 dark:text-opacity-20 cursor-not-allowed"
-                    : "cursor-pointer"
-                } ${
-                  isActive
-                    ? "bg-primary-6000 border-primary-6000 text-white hover:bg-primary-6000"
-                    : "border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
-                }`}
-                onClick={() => {
-                  if (sizeOutStock) {
-                    return;
-                  }
-                  setSizeSelected(size);
-                }}
-              >
-                {size}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
   const renderStatus = () => {
     if (!status) {
       return null;
@@ -167,7 +78,7 @@ const ProductDetailPage = () => {
       return (
         <div className={CLASSES}>
           <SparklesIcon className="w-3.5 h-3.5" />
-          <span className="ml-1 leading-none">{status}</span>
+          <span className="ml-1 leading-none">{`Stok Tersedia`}</span>
         </div>
       );
     }
@@ -203,45 +114,26 @@ const ProductDetailPage = () => {
       <div className="space-y-7 2xl:space-y-8">
         {/* ---------- 1 HEADING ----------  */}
         <div>
-          <h2 className="text-2xl sm:text-3xl font-semibold">
-            Heavy Weight Shoes
-          </h2>
-
-          <div className="flex items-center mt-5 space-x-4 sm:space-x-5">
-            {/* <div className="flex text-xl font-semibold">$112.00</div> */}
+          <div className="flex items-center gap-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold">
+              Heavy Weight Shoes
+            </h2>
             <Prices
               contentClass="py-1 px-2 md:py-1.5 md:px-3 text-lg font-semibold"
               price={112}
             />
+          </div>
 
-            <div className="h-7 border-l border-slate-300 dark:border-slate-700"></div>
-
-            <div className="flex items-center">
-              <a
-                href="#reviews"
-                className="flex items-center text-sm font-medium"
-              >
-                <StarIcon className="w-5 h-5 pb-[1px] text-yellow-400" />
-                <div className="ml-1.5 flex">
-                  <span>4.9</span>
-                  <span className="block mx-2">·</span>
-                  <span className="text-slate-600 dark:text-slate-400 underline">
-                    142 reviews
-                  </span>
-                </div>
-              </a>
-              <span className="hidden sm:block mx-2.5">·</span>
-              <div className="hidden sm:flex items-center text-sm">
-                <SparklesIcon className="w-3.5 h-3.5" />
-                <span className="ml-1 leading-none">{status}</span>
-              </div>
+          <div className="flex items-center mt-5 space-x-4 sm:space-x-5">
+            <div className="flex justify-start rtl:justify-end items-center space-x-4 sm:space-x-5 rtl:space-x-reverse">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-4000">
+                <span>{`product?.productCategory.name`}</span>
+                <span className="mx-2 border-s border-slate-200 dark:border-slate-700 h-4"></span>
+                <span>{`product?.productSubCategory.name`}</span>
+              </p>
             </div>
           </div>
         </div>
-
-        {/* ---------- 3 VARIANTS AND SIZE LIST ----------  */}
-        <div className="">{renderVariants()}</div>
-        <div className="">{renderSizeList()}</div>
 
         {/*  ---------- 4  QTY AND ADD TO CART BUTTON */}
         <div className="flex space-x-3.5">
@@ -256,7 +148,7 @@ const ProductDetailPage = () => {
             onClick={notifyAddTocart}
           >
             <BagIcon className="hidden sm:inline-block w-5 h-5 mb-0.5" />
-            <span className="ml-3">Add to cart</span>
+            <span className="ml-3">Tambahkan ke Keranjang</span>
           </ButtonPrimary>
         </div>
 
@@ -278,7 +170,7 @@ const ProductDetailPage = () => {
   const renderDetailSection = () => {
     return (
       <div className="">
-        <h2 className="text-2xl font-semibold">Product Details</h2>
+        <h2 className="text-2xl font-semibold">Detail Produk</h2>
         <div className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7">
           <p>
             The patented eighteen-inch hardwood Arrowhead deck --- finely

@@ -3,40 +3,41 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const categoryData = [
-  { name: 'Rare Earth Magnets' },
-  { name: 'Flexible Magnets' },
-  { name: 'Magnetic Assembly' },
-  { name: 'Magnetic Separator' }
+  { name: 'Rare Earth Magnets', slug: 'rare-earth-magnets' },
+  { name: 'Flexible Magnets', slug: 'flexible-magnets' },
+  { name: 'Magnetic Assembly', slug: 'magnetic-assembly' },
+  { name: 'Magnetic Separator', slug: 'magnetic-separator' }
 ]
 
 const subCategoryData = [
-  { name: 'Neodymium Magnets', categoryName: 'Rare Earth Magnets' },
-  { name: 'Samarium Cobalts Magnet', categoryName: 'Rare Earth Magnets' },
-  { name: 'Wind Turbine Magnets', categoryName: 'Rare Earth Magnets' },
-  { name: 'PM Motor Magnets', categoryName: 'Rare Earth Magnets' },
-  { name: 'Magnetic Sheets', categoryName: 'Flexible Magnets' },
-  { name: 'Magnetic Strips', categoryName: 'Flexible Magnets' },
-  { name: 'Fridge Magnets', categoryName: 'Flexible Magnets' },
-  { name: 'Magnetic Bracelet', categoryName: 'Flexible Magnets' },
-  { name: 'Magnetic Educational Toys', categoryName: 'Flexible Magnets' },
-  { name: 'Magnetic White Board', categoryName: 'Flexible Magnets' },
-  { name: 'Magnetic Hooks', categoryName: 'Magnetic Assembly' },
-  { name: 'Pot Magnet', categoryName: 'Magnetic Assembly' },
-  { name: 'Rubber Coated Magnet', categoryName: 'Magnetic Assembly' },
-  { name: 'Magnetic Component', categoryName: 'Magnetic Assembly' },
-  { name: 'Magswitch', categoryName: 'Magnetic Assembly' },
-  { name: 'Magnetic Bar', categoryName: 'Magnetic Separator' },
-  { name: 'Magnetic Grill', categoryName: 'Magnetic Separator' },
-  { name: 'Magnetic Liquid Trap', categoryName: 'Magnetic Separator' },
-  { name: 'Drawer Magnet', categoryName: 'Magnetic Separator' },
-  { name: 'Magnetic Roll Separator', categoryName: 'Magnetic Separator' },
-  { name: 'Magnetic Plate', categoryName: 'Magnetic Separator' },
-  { name: 'Magnetic Sheet Separator', categoryName: 'Magnetic Separator' }
+  { name: 'Neodymium Magnets', slug: 'neodymium-magnets', categoryName: 'Rare Earth Magnets' },
+  { name: 'Samarium Cobalts Magnet', slug: 'samarium-cobalts-magnet', categoryName: 'Rare Earth Magnets' },
+  { name: 'Wind Turbine Magnets', slug: 'wind-turbine-magnets', categoryName: 'Rare Earth Magnets' },
+  { name: 'PM Motor Magnets', slug: 'pm-motor-magnets', categoryName: 'Rare Earth Magnets' },
+  { name: 'Magnetic Sheets', slug: 'magnetic-sheets', categoryName: 'Flexible Magnets' },
+  { name: 'Magnetic Strips', slug: 'magnetic-strips', categoryName: 'Flexible Magnets' },
+  { name: 'Fridge Magnets', slug: 'fridge-magnets', categoryName: 'Flexible Magnets' },
+  { name: 'Magnetic Bracelet', slug: 'magnetic-bracelet', categoryName: 'Flexible Magnets' },
+  { name: 'Magnetic Educational Toys', slug: 'magnetic-educational-toys', categoryName: 'Flexible Magnets' },
+  { name: 'Magnetic White Board', slug: 'magnetic-white-board', categoryName: 'Flexible Magnets' },
+  { name: 'Magnetic Hooks', slug: 'magnetic-hooks', categoryName: 'Magnetic Assembly' },
+  { name: 'Pot Magnet', slug: 'pot-magnet', categoryName: 'Magnetic Assembly' },
+  { name: 'Rubber Coated Magnet', slug: 'rubber-coated-magnet', categoryName: 'Magnetic Assembly' },
+  { name: 'Magnetic Component', slug: 'magnetic-component', categoryName: 'Magnetic Assembly' },
+  { name: 'Magswitch', slug: 'magswitch', categoryName: 'Magnetic Assembly' },
+  { name: 'Magnetic Bar', slug: 'magnetic-bar', categoryName: 'Magnetic Separator' },
+  { name: 'Magnetic Grill', slug: 'magnetic-grill', categoryName: 'Magnetic Separator' },
+  { name: 'Magnetic Liquid Trap', slug: 'magnetic-liquid-trap', categoryName: 'Magnetic Separator' },
+  { name: 'Drawer Magnet', slug: 'drawer-magnet', categoryName: 'Magnetic Separator' },
+  { name: 'Magnetic Roll Separator', slug: 'magnetic-roll-separator', categoryName: 'Magnetic Separator' },
+  { name: 'Magnetic Plate', slug: 'magnetic-plate', categoryName: 'Magnetic Separator' },
+  { name: 'Magnetic Sheet Separator', slug: 'magnetic-sheet-separator', categoryName: 'Magnetic Separator' }
 ]
 
 const productData = [
   {
     name: 'Neodymium Disc Magnets',
+    slug: 'neodymium-disc-magnets',
     description: `
     Neodymium disc magnets are powerful permanent magnets made from an alloy of neodymium, iron, and boron. These magnets are known for their exceptional strength and versatility, making them ideal for various industrial and commercial applications.
 
@@ -77,6 +78,7 @@ const productData = [
   },
   {
     name: 'Flexible Magnetic Sheets',
+    slug: 'flexible-magnetic-sheets',
     description: `
     Flexible magnetic sheets are versatile and adaptable magnetic materials that can be easily cut, shaped, and applied to various surfaces. These sheets combine the properties of magnets with the flexibility of rubber or plastic, making them ideal for a wide range of applications.
 
@@ -117,6 +119,7 @@ const productData = [
   },
   {
     name: 'Magnetic Hooks',
+    slug: 'magnetic-hooks',
     description: `
     Magnetic hooks are innovative and convenient fastening solutions that combine the strength of magnets with the functionality of hooks. These versatile devices offer a quick and easy way to hang items without the need for drilling or permanent fixtures.
 
@@ -157,6 +160,7 @@ const productData = [
   },
   {
     name: 'Magnetic Separator Bars',
+    slug: 'magnetic-separator-bars',
     description: `
     Magnetic separator bars are essential tools in various industries for removing ferrous contaminants from dry, free-flowing materials. These powerful magnetic devices help ensure product purity, protect processing equipment, and maintain high-quality standards in production lines.
 
@@ -224,6 +228,7 @@ async function seed() {
       const createdSubCategory = await prisma.productSubCategory.create({
         data: {
           name: subCategory.name,
+          slug: subCategory.slug,
           productCategoryId: category.productCategoryId
         }
       })
@@ -247,6 +252,7 @@ async function seed() {
       const createdProduct = await prisma.product.create({
         data: {
           name: product.name,
+          slug: product.slug,
           description: product.description,
           weightRange: product.weightRange,
           priceRange: product.priceRange,
