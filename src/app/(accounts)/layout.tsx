@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { FC } from "react";
+import { useSession } from "next-auth/react";
 
 export interface CommonLayoutProps {
   children?: React.ReactNode;
@@ -37,6 +38,7 @@ const pages: {
 ];
 
 const CommonLayout: FC<CommonLayoutProps> = ({ children }) => {
+  const { data: session } = useSession();
   const pathname = usePathname();
 
   return (
@@ -44,12 +46,12 @@ const CommonLayout: FC<CommonLayoutProps> = ({ children }) => {
       <div className="mt-14 sm:mt-20">
         <div className="max-w-4xl mx-auto">
           <div className="max-w-2xl">
-            <h2 className="text-3xl xl:text-4xl font-semibold">Account</h2>
+            <h2 className="text-3xl xl:text-4xl font-semibold">Akun</h2>
             <span className="block mt-4 text-neutral-500 dark:text-neutral-400 text-base sm:text-lg">
               <span className="text-slate-900 dark:text-slate-200 font-semibold">
-                Enrico Cole,
+                {session?.user?.name ? session?.user?.name : session?.user?.username},
               </span>{" "}
-              ciseco@gmail.com · Los Angeles, CA
+              {session?.user?.email}
             </span>
           </div>
           <hr className="mt-10 border-slate-200 dark:border-slate-700"></hr>
