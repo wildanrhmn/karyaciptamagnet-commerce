@@ -61,10 +61,8 @@ export default function AvatarDropdown() {
                             sizeClass="w-12 h-12"
                           />
                           <div className="flex-grow">
-                            <h4 className="font-semibold">
-                              {session?.user.name || session?.user.username}
-                            </h4>
-                            <p className="text-xs mt-0.5">{session?.user.scope}</p>
+                            <h4 className="font-semibold truncate max-w-[150px]">{session?.user.name || session?.user.username}</h4>
+                            <p className="text-xs mt-0.5">{session?.user.scope.charAt(0).toUpperCase() + session?.user.scope.slice(1)}</p>
                           </div>
                         </div>
                         <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
@@ -139,7 +137,7 @@ export default function AvatarDropdown() {
                           </div>
                           <div className="ml-4">
                             <p className="text-sm font-medium ">
-                              {"My Account"}
+                              {"Akun Saya"}
                             </p>
                           </div>
                         </Link>
@@ -191,7 +189,7 @@ export default function AvatarDropdown() {
                             </svg>
                           </div>
                           <div className="ml-4">
-                            <p className="text-sm font-medium ">{"My Order"}</p>
+                            <p className="text-sm font-medium ">{"Pesanan Saya"}</p>
                           </div>
                         </Link>
 
@@ -301,7 +299,7 @@ export default function AvatarDropdown() {
                           </svg>
                         </div>
                         <div className="ml-4">
-                          <p className="text-sm font-medium ">{"Dark theme"}</p>
+                          <p className="text-sm font-medium ">{"Tema Gelap"}</p>
                         </div>
                       </div>
                       <SwitchDarkMode2 />
@@ -365,7 +363,7 @@ export default function AvatarDropdown() {
                         </svg>
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium ">{"Help"}</p>
+                        <p className="text-sm font-medium ">{"Bantuan"}</p>
                       </div>
                     </Link>
 
@@ -409,7 +407,7 @@ export default function AvatarDropdown() {
                           </svg>
                         </div>
                         <div className="ml-4">
-                          <p className="text-sm font-medium ">{"Log out"}</p>
+                          <p className="text-sm font-medium ">{"Keluar"}</p>
                         </div>
                       </Link>
                     )}

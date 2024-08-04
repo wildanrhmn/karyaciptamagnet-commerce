@@ -29,13 +29,13 @@ export async function SignInAction(formData: IFormLoginInput) {
 }
 
 export async function SignUpAction(formData: IFormRegisterInput) {
-  const { username, password, email } = formData;
+  const { fullName, password, email } = formData;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     await prisma.user.create({
       data: {
-        username,
+        name: fullName,
         email,
         password: hashedPassword,
       },
@@ -53,25 +53,29 @@ export async function UpdateProfile(formData: FormData) {
 
   const id = session?.user.id;
 
-  const name = formData.get("name") as string;
-  const dateOfBirth = formData.get("dateOfBirth") as string;
-  const fullAddress = formData.get("fullAddress") as string;
-  const gender = formData.get("gender") as string;
-  const phoneNumber = formData.get("phoneNumber") as string;
-  const about = formData.get("about") as string;
-  const image = formData.get("image") as File;
-  const oldImage = JSON.parse(formData.get("oldImage") as string);
+  const name = formData.get("name") as string || null;
+  const dateOfBirth = formData.get("dateOfBirth") as string || null;
+  const province = formData.get("province") as string || null;
+  const city = formData.get("city") as string || null;
+  const fullAddress = formData.get("fullAddress") as string || null;
+  const gender = formData.get("gender") as string || null;
+  const phoneNumber = formData.get("phoneNumber") as string || null;
+  const about = formData.get("about") as string || null;
+  const image = formData.get("image") as File || null;
+  const oldImage = formData.get("oldImage") ? JSON.parse(formData.get("oldImage") as string) : null;
 
-  let imageData: any;
-  if (typeof image === "string") {
-    imageData = JSON.stringify(oldImage);
-  } else {
-    imageData = await uploadImage(image).then((result: any) => {
-      return JSON.stringify({
-        url: result.url,
-        public_id: result.public_id,
+  let imageData: any = null;
+  if (image) {
+    if (typeof image === "string") {
+      imageData = JSON.stringify(oldImage);
+    } else {
+      imageData = await uploadImage(image).then((result: any) => {
+        return JSON.stringify({
+          url: result.url,
+          public_id: result.public_id,
+        });
       });
-    });
+    }
   }
 
   try {
@@ -83,6 +87,8 @@ export async function UpdateProfile(formData: FormData) {
         name,
         dateOfBirth,
         fullAddress,
+        provinceId: province,
+        cityId: city,
         gender,
         phoneNumber,
         about,
@@ -90,7 +96,7 @@ export async function UpdateProfile(formData: FormData) {
         updatedAt: new Date(),
       },
     });
-    if (oldImage.public_id) {
+    if (oldImage && oldImage.public_id !== null) {
       await cloudinary.uploader.destroy(oldImage.public_id);
     }
     revalidatePath("/account");

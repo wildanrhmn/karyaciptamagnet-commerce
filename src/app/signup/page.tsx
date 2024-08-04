@@ -21,7 +21,7 @@ const loginSocials = [
 ];
 
 export interface IFormRegisterInput {
-  username: string;
+  fullName: string;
   password: string;
   email: string;
 }
@@ -55,7 +55,7 @@ const PageSignUp = () => {
             if (signInResult?.error) {
                 toast.error("Error signing in after registration");
             } else {
-                router.push("/");
+                router.push("/account");
             }
         } else {
             toast.dismiss();
@@ -110,13 +110,13 @@ const PageSignUp = () => {
           >
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
-                Username
+                Nama Lengkap
               </span>
               <Input
                 type="text"
-                placeholder="Username"
+                placeholder="Nama Lengkap"
                 className="mt-1"
-                {...register("username", {
+                {...register("fullName", {
                   required: true,
                   minLength: 6,
                   maxLength: 20,
@@ -125,7 +125,7 @@ const PageSignUp = () => {
             </label>
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
-                Email address
+                Email
               </span>
               <Input
                 type="email"
@@ -139,7 +139,7 @@ const PageSignUp = () => {
             </label>
             <label className="block">
               <span className="flex justify-between items-center text-neutral-800 dark:text-neutral-200">
-                Password
+                Kata Sandi
               </span>
               <Input
                 type="password"

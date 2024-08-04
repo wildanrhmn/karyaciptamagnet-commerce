@@ -147,7 +147,7 @@ model User {
   id            String     @id @default(cuid())
   username      String?
   name          String?
-  gender        String?    @default("not specified")
+  gender        String?
   password      String?
   email         String?    @unique
   emailVerified DateTime?

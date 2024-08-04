@@ -33,15 +33,24 @@ async function getUser(id: string) {
     
     return user;
   } catch (error) {
-    console.error(error);
     return null;
   }
+}
+
+async function getProvinces() {
+  const provinces = await prisma.provinces.findMany({
+    include: {
+      cities: true
+    }
+  });
+  return provinces;
 }
 
 
 export default async function AccountPage() {
   const session = await auth();
   const user = await getUser(session?.user?.id);
+  const provinces = await getProvinces();
 
   let parsedUser = user;
   if (user && user.image) {
@@ -61,7 +70,7 @@ export default async function AccountPage() {
         <h2 className="text-2xl sm:text-3xl font-semibold">
           Informasi Akun
         </h2>
-        <AccountForm user={parsedUser} />
+        <AccountForm user={parsedUser} provinces={provinces} />
       </div>
     </div>
   );

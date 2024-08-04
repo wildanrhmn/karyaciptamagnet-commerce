@@ -1,62 +1,70 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Label from "@/components/Label/Label";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import Input from "@/shared/Input/Input";
 import Select from "@/shared/Select/Select";
 import Textarea from "@/shared/Textarea/Textarea";
+import dummyImage from "@/images/avatars/Image-1.png";
+import toast from "react-hot-toast";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { UpdateProfile } from "@/lib/action";
-import { useSession } from "next-auth/react";
-import toast from "react-hot-toast";
 
-const AccountForm = ({ user }: { user: any }) => {
-  const { data: session, update } = useSession();
-  const [avatarPreview, setAvatarPreview] = useState(user?.image?.url);
-  const { register, handleSubmit, watch, setValue } = useForm();
-  const genderValue = watch("gender");
+const AccountForm = ({ user, provinces }: { user: any; provinces: any }) => {
+  const [avatarPreview, setAvatarPreview] = useState(
+    user?.image?.url ? user?.image?.url : dummyImage
+  );
+  const { register, handleSubmit, setValue } = useForm();
+  const [cities, setCities] = useState([]);
 
   const onSubmit: SubmitHandler<any> = async (data) => {
-    const { name, dateOfBirth, fullAddress, gender, phoneNumber, about, image } = data;
-    const dateObj = new Date(dateOfBirth);
-    const isoDate = dateObj.toISOString();
-  
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('dateOfBirth', isoDate);
-    formData.append('fullAddress', fullAddress);
-    formData.append('gender', gender);
-    formData.append('phoneNumber', phoneNumber);
-    formData.append('about', about);
-    formData.append('image', image[0]);
-    formData.append('oldImage', JSON.stringify(user?.image));
-  
-    await toast.promise(
-      UpdateProfile(formData),
-      {
-        loading: 'Memperbarui profil...',
-        success: (result: any) => {
-          if (result && result.success) {
-            // update({
-            //   ...session,
-            //   user: {
-            //     ...session?.user,
-            //     name: name,
-            //     image: result.user?.image || session?.user?.image,
-            //   }
-            // });
-            return result.message;
-          } else {
-            throw new Error(result?.message || "Gagal memperbarui profil.");
-          }
-        },
-        error: (err) => err.message || "Gagal memperbarui profil."
-      }
-    );
+    const {
+      name,
+      dateOfBirth,
+      province,
+      city,
+      fullAddress,
+      gender,
+      phoneNumber,
+      about,
+      image,
+    } = data;
+    const dateObj = dateOfBirth ? new Date(dateOfBirth) : null;
+    const isoDate = dateObj ? dateObj.toISOString() : null;
 
-    console.info(session);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("dateOfBirth", isoDate || "");
+    formData.append("province", province);
+    formData.append("city", city);
+    formData.append("fullAddress", fullAddress);
+    formData.append("gender", gender);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("about", about);
+    formData.append("image", image[0]);
+    formData.append("oldImage", JSON.stringify(user?.image));
+
+    await toast.promise(UpdateProfile(formData), {
+      loading: "Memperbarui profil...",
+      success: (result: any) => {
+        if (result && result.success) {
+          // update({
+          //   ...session,
+          //   user: {
+          //     ...session?.user,
+          //     name: name,
+          //     image: result.user?.image || session?.user?.image,
+          //   }
+          // });
+          return result.message;
+        } else {
+          throw new Error(result?.message || "Gagal memperbarui profil.");
+        }
+      },
+      error: (err) => err.message || "Gagal memperbarui profil.",
+    });
   };
 
   const handleImageChange = (e: any) => {
@@ -72,10 +80,6 @@ const AccountForm = ({ user }: { user: any }) => {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   }
-
-  useEffect(() => {
-    setValue("gender", user?.gender || "");
-  }, [user, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -107,7 +111,7 @@ const AccountForm = ({ user }: { user: any }) => {
                 />
               </svg>
 
-              <span className="mt-1 text-xs">Change Image</span>
+              <span className="mt-1 text-xs">Ubah Foto Profil</span>
             </div>
             <input
               type="file"
@@ -159,8 +163,82 @@ const AccountForm = ({ user }: { user: any }) => {
             </div>
           </div>
           {/* ---- */}
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <Label>Provinsi</Label>
+              <Select
+                className="mt-1.5 w-full"
+                defaultValue={user?.province?.provinceId || ""}
+                {...register("province")}
+                onChange={(e) => {
+                  const provinceId = e.target.value;
+                  const filteredCities = provinces.filter(
+                    (province: any) => province.provinceId === provinceId
+                  );
+                  setCities(filteredCities[0].cities);
+                  setValue("province", provinceId);
+                }}
+              >
+                <option value="" disabled>
+                  Pilih Provinsi
+                </option>
+                {provinces.map((province: any) => (
+                  <option key={province.provinceId} value={province.provinceId}>
+                    {province.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="flex-1">
+              <Label>Kota</Label>
+              <Select
+                className="mt-1.5 w-full"
+                defaultValue={user?.city?.cityId || ""}
+                {...register("city")}
+                onChange={(e) => {
+                  const cityId = e.target.value;
+                  setValue("city", cityId);
+                }}
+              >
+                <option value="" disabled>
+                  Pilih Kota
+                </option>
+                {cities.length === 0 ? (
+                  <>
+                    {(() => {
+                      const userProvince = provinces.find(
+                        (province: any) =>
+                          province.provinceId === user?.province?.provinceId
+                      );
+                      if (userProvince && userProvince.cities) {
+                        return userProvince.cities.map((city: any) => (
+                          <option key={city.cityId} value={city.cityId}>
+                            {city.name}
+                          </option>
+                        ));
+                      } else {
+                        return (
+                          <option value="" disabled>
+                            Silahkan pilih provinsi
+                          </option>
+                        );
+                      }
+                    })()}
+                  </>
+                ) : (
+                  cities.map((city: any) => (
+                    <option key={city.cityId} value={city.cityId}>
+                      {city.name}
+                    </option>
+                  ))
+                )}
+              </Select>
+            </div>
+          </div>
+
+          {/* ---- */}
           <div>
-            <Label>Alamat</Label>
+            <Label>Alamat Lengkap</Label>
             <div className="mt-1.5 flex">
               <span className="inline-flex items-center px-2.5 rounded-l-2xl border border-r-0 border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-sm">
                 <i className="text-2xl las la-map-signs"></i>
@@ -173,16 +251,17 @@ const AccountForm = ({ user }: { user: any }) => {
             </div>
           </div>
 
+
           {/* ---- */}
           <div>
             <Label>Jenis Kelamin</Label>
             <Select
               className="mt-1.5"
-              value={genderValue}
+              defaultValue={user?.gender || ""}
               {...register("gender")}
               onChange={(e) => setValue("gender", e.target.value)}
             >
-              <option value="" disabled defaultChecked>
+              <option value="" disabled>
                 Pilih Jenis Kelamin
               </option>
               <option value="Pria">Pria</option>
