@@ -62,7 +62,7 @@ export default function AvatarDropdown() {
                           />
                           <div className="flex-grow">
                             <h4 className="font-semibold truncate max-w-[150px]">{session?.user.name || session?.user.username}</h4>
-                            <p className="text-xs mt-0.5">{session?.user.scope.charAt(0).toUpperCase() + session?.user.scope.slice(1)}</p>
+                            <p className="text-xs mt-0.5">{session?.user?.scope?.charAt(0).toUpperCase() + session?.user?.scope?.slice(1)}</p>
                           </div>
                         </div>
                         <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />

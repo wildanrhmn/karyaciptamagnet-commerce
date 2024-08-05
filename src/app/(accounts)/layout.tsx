@@ -16,23 +16,23 @@ const pages: {
   link: Route;
 }[] = [
   {
-    name: "Account info",
+    name: "Informasi Akun",
     link: "/account",
   },
   {
-    name: "Save lists",
+    name: "Daftar Simpan",
     link: "/account-savelists",
   },
   {
-    name: " My order",
+    name: "Pesanan Saya",
     link: "/account-order",
   },
   {
-    name: "Change password",
+    name: "Ubah Kata Sandi",
     link: "/account-password",
   },
   {
-    name: "Change Billing",
+    name: "Ubah Penagihan",
     link: "/account-billing",
   },
 ];

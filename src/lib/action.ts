@@ -124,3 +124,41 @@ async function uploadImage(data: File) {
       .end(buffer);
   });
 }
+
+export async function UpdatePassword(formData: FormData) {
+  const session = await auth();
+  const id = session?.user.id;
+
+  const currentPassword = formData.get("currentPassword") as string || null;
+  const newPassword = formData.get("newPassword") as string || null;
+  const confirmPassword = formData.get("confirmPassword") as string || null;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      return { success: false, message: "User not found." };
+    }
+
+    if (!currentPassword || !(await bcrypt.compare(currentPassword, user.password!))) {
+      return { success: false, message: "Current password is incorrect." };
+    }
+
+    if (!newPassword || !confirmPassword || newPassword !== confirmPassword) {
+      return { success: false, message: "New password and confirm password do not match." };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    });
+
+    return { success: true, message: "Berhasil memperbarui kata sandi." };
+  } catch (error) {
+    return { success: false, message: "Gagal memperbarui kata sandi." };
+  }
+}

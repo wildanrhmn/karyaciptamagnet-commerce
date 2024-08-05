@@ -11,8 +11,10 @@ import dummyImage from "@/images/avatars/Image-1.png";
 import toast from "react-hot-toast";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { UpdateProfile } from "@/lib/action";
+import { useSession } from "next-auth/react";
 
 const AccountForm = ({ user, provinces }: { user: any; provinces: any }) => {
+  const { data: session, update } = useSession();
   const [avatarPreview, setAvatarPreview] = useState(
     user?.image?.url ? user?.image?.url : dummyImage
   );
@@ -50,14 +52,13 @@ const AccountForm = ({ user, provinces }: { user: any; provinces: any }) => {
       loading: "Memperbarui profil...",
       success: (result: any) => {
         if (result && result.success) {
-          // update({
-          //   ...session,
-          //   user: {
-          //     ...session?.user,
-          //     name: name,
-          //     image: result.user?.image || session?.user?.image,
-          //   }
-          // });
+          update({
+            name: name,
+            email: result.user?.email,
+            username: result.user?.username,
+            scope: result.user?.scope,
+            image: result.user?.image || session?.user?.image,
+          });
           return result.message;
         } else {
           throw new Error(result?.message || "Gagal memperbarui profil.");
