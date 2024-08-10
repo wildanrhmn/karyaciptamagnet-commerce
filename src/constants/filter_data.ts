@@ -38,4 +38,4 @@ export const categoryData = [
     { name: "Harga Tinggi - Rendah", id: "Harga-tinggi-rendah" },
   ];
 
-  export const MINMAX_PRICE_RANGE = [100000, 5000000];
+  export const MINMAX_PRICE_RANGE = [10000, 5000000];

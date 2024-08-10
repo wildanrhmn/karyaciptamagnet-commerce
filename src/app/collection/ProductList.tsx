@@ -15,7 +15,7 @@ export function ProductList({
   onTotalPagesChange: (totalPages: number) => void
 }) {
   const [products, setProducts] = useState([]);
-
+  
   useEffect(() => {
     const fetchProducts = async () => {
       const params = new URLSearchParams({ page: page.toString() });
