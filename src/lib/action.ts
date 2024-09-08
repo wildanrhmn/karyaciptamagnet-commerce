@@ -162,3 +162,90 @@ export async function UpdatePassword(formData: FormData) {
     return { success: false, message: "Gagal memperbarui kata sandi." };
   }
 }
+
+export async function AddToCart(productId: string, userId: string, quantity: number = 1, customization: string = "") {
+  try {
+    let cart = await prisma.cart.findFirst({
+      where: { userId, status: "pending" },
+    });
+
+    if (!cart) {
+      cart = await prisma.cart.create({
+        data: { userId, status: "pending" },
+      });
+    }
+
+    const existingCartItem = await prisma.cartItem.findFirst({
+      where: {
+        cartId: cart.cartId,
+        productId,
+      },
+    });
+
+    if (existingCartItem) {
+      await prisma.cartItem.update({
+        where: { cartItemId: existingCartItem.cartItemId },
+        data: { 
+          quantity: existingCartItem.quantity + quantity,
+          customization: customization || existingCartItem.customization
+        },
+      });
+    } else {
+      await prisma.cartItem.create({
+        data: {
+          cartId: cart.cartId,
+          productId,
+          quantity,
+          customization,
+        },
+      });
+    }
+
+    // Fetch the updated cart with items
+    const updatedCart = await prisma.cart.findUnique({
+      where: { cartId: cart.cartId },
+      include: { items: { include: { product: true } } },
+    });
+
+    revalidatePath("/cart");
+
+    return { success: true, message: "Berhasil menambahkan produk ke keranjang", cart: updatedCart };
+  } catch (error) {
+    console.error("Gagal menambahkan produk ke keranjang:", error);
+    return { success: false, message: "Gagal menambahkan produk ke keranjang" };
+  }
+}
+
+export async function RemoveFromCart(cartItemId: string) {
+  try {
+    const cartItem = await prisma.cartItem.findUnique({
+      where: { cartItemId },
+      include: { cart: true }
+    });
+
+    if (!cartItem) {
+      return { success: false, message: "Item keranjang tidak ditemukan" };
+    }
+
+    await prisma.cartItem.delete({
+      where: { cartItemId }
+    });
+
+    const remainingItems = await prisma.cartItem.count({
+      where: { cartId: cartItem.cartId }
+    });
+
+    if (remainingItems === 0) {
+      await prisma.cart.delete({
+        where: { cartId: cartItem.cartId }
+      });
+    }
+
+    revalidatePath("/cart");
+
+    return { success: true, message: "Berhasil menghapus produk dari keranjang" };
+  } catch (error) {
+    console.error("Gagal menghapus produk dari keranjang:", error);
+    return { success: false, message: "Gagal menghapus produk dari keranjang" };
+  }
+}

@@ -15,47 +15,57 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import NcImage from "@/shared/NcImage/NcImage";
+import { AddToCart } from "@/lib/action";
+import { useSession } from "next-auth/react";
 
 export interface ProductCardProps {
   className?: string;
   data?: any;
 }
 
-const ProductCard: FC<ProductCardProps> = ({
-  className,
-  data,
-}) => {
-
+const ProductCard: FC<ProductCardProps> = ({ className, data }) => {
   const [showModalQuickView, setShowModalQuickView] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
-  const notifyAddTocart = ({ product }: { product: any }) => {
-    toast.custom(
-      (t) => (
-        <Transition
-          appear
-          show={t.visible}
-          className="p-4 max-w-md w-full bg-white dark:bg-slate-800 shadow-lg rounded-2xl pointer-events-auto ring-1 ring-black/5 dark:ring-white/10 text-slate-900 dark:text-slate-200"
-          enter="transition-all duration-150"
-          enterFrom="opacity-0 translate-x-20"
-          enterTo="opacity-100 translate-x-0"
-          leave="transition-all duration-150"
-          leaveFrom="opacity-100 translate-x-0"
-          leaveTo="opacity-0 translate-x-20"
-        >
-          <p className="block text-base font-semibold leading-none">
-            Berhasil menambahkan ke keranjang!
-          </p>
-          <div className="border-t border-slate-2000 dark:border-slate-7000 my-4" />
-          {renderProductCartOnNotify({ product })}
-        </Transition>
-      ),
-      {
-        position: "top-right",
-        id: String(product?.productId) || "product-detail",
-        duration: 3000,
-      }
-    );
+  const notifyAddTocart = async ({ product }: { product: any }) => {
+    if (!session?.user) {
+      toast.error("Please log in to add items to your cart");
+      return;
+    }
+
+    const result = await AddToCart(product.productId, session.user.id);
+
+    if (result.success) {
+      toast.custom(
+        (t) => (
+          <Transition
+            appear
+            show={t.visible}
+            className="p-4 max-w-md w-full bg-white dark:bg-slate-800 shadow-lg rounded-2xl pointer-events-auto ring-1 ring-black/5 dark:ring-white/10 text-slate-900 dark:text-slate-200"
+            enter="transition-all duration-150"
+            enterFrom="opacity-0 translate-x-20"
+            enterTo="opacity-100 translate-x-0"
+            leave="transition-all duration-150"
+            leaveFrom="opacity-100 translate-x-0"
+            leaveTo="opacity-0 translate-x-20"
+          >
+            <p className="block text-base font-semibold leading-none">
+              {result.message}
+            </p>
+            <div className="border-t border-slate-2000 dark:border-slate-7000 my-4" />
+            {renderProductCartOnNotify({ product })}
+          </Transition>
+        ),
+        {
+          position: "top-right",
+          id: String(product?.productId) || "product-detail",
+          duration: 3000,
+        }
+      );
+    } else {
+      toast.error(result.message);
+    }
   };
 
   const renderProductCartOnNotify = ({ product }: { product: any }) => {
@@ -77,13 +87,9 @@ const ProductCard: FC<ProductCardProps> = ({
               <div>
                 <h3 className="text-base font-medium ">{product?.name}</h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-4000">
-                  <span>
-                    {product?.productCategory.name}
-                  </span>
+                  <span>{product?.productCategory.name}</span>
                   <span className="mx-2 border-s border-slate-200 dark:border-slate-700 h-4"></span>
-                  <span>
-                    {product?.productSubCategory.name}
-                  </span>
+                  <span>{product?.productSubCategory.name}</span>
                 </p>
               </div>
             </div>
@@ -134,14 +140,15 @@ const ProductCard: FC<ProductCardProps> = ({
     );
   };
 
-
-
   return (
     <>
       <div
         className={`nc-ProductCard relative flex flex-col bg-transparent ${className}`}
       >
-        <Link href={`/product/${data?.slug}`} className="absolute inset-0"></Link>
+        <Link
+          href={`/product/${data?.slug}`}
+          className="absolute inset-0"
+        ></Link>
 
         <div className="relative flex-shrink-0 bg-slate-50 dark:bg-slate-300 rounded-3xl overflow-hidden z-1 group">
           <Link href={`/product/${data?.slug}`} className="block">
@@ -155,7 +162,10 @@ const ProductCard: FC<ProductCardProps> = ({
             />
           </Link>
           <ProductStatus stock={1} />
-          <LikeButton className="absolute top-3 end-3 z-10" productId={data?.productId} />
+          <LikeButton
+            className="absolute top-3 end-3 z-10"
+            productId={data?.productId}
+          />
           {renderGroupButtons({ product: data })}
         </div>
 

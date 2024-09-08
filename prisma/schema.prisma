@@ -7,26 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CartStatus {
+  DRAFT
+  PENDING_SUBMISSION
+  SUBMITTED_FOR_PRICING
+  ADMIN_REVIEWING
+  PRICED
+  AWAITING_PAYMENT
+  PAYMENT_PROCESSING
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
 model Product {
-  productId     String         @id @default(cuid())
-  name          String
-  slug          String         @unique
-  description   String         @db.VarChar(10000)
-  smallDescription String
-  weightRange   String
-  priceRange    String
-  productCategoryId String
+  productId            String             @id @default(cuid())
+  name                 String
+  slug                 String             @unique
+  description          String             @db.VarChar(10000)
+  smallDescription     String
+  weightRange          String
+  priceRange           String
+  productCategoryId    String
   productSubCategoryId String
-  stock         Int
-  orderCount    Int @default(0)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  wishlist      UserWishlist[]
-  ProductImages ProductImage[]
-  CartItem      CartItem[]
-  productReviews ProductReview[]
-  productCategory ProductCategory @relation(fields: [productCategoryId], references: [productCategoryId])
-  productSubCategory ProductSubCategory @relation(fields: [productSubCategoryId], references: [productSubCategoryId])
+  stock                Int
+  orderCount           Int                @default(0)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  wishlist             UserWishlist[]
+  ProductImages        ProductImage[]
+  CartItem             CartItem[]
+  productReviews       ProductReview[]
+  productCategory      ProductCategory    @relation(fields: [productCategoryId], references: [productCategoryId])
+  productSubCategory   ProductSubCategory @relation(fields: [productSubCategoryId], references: [productSubCategoryId])
 
   @@index([name])
   @@index([productCategoryId])
@@ -35,53 +52,52 @@ model Product {
 }
 
 model ProductReview {
-  productReviewId String @id @default(cuid())
-  productId String
-  userId String
-  review String
-  rating Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  product Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productReviewId String   @id @default(cuid())
+  productId       String
+  userId          String
+  review          String
+  rating          Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  product         Product  @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("productreviews")
 }
 
 model ProductCategory {
-  productCategoryId String @id @default(cuid())
-  name String @unique
-  slug String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  productCategoryId    String               @id @default(cuid())
+  name                 String               @unique
+  slug                 String               @unique
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
   productSubCategories ProductSubCategory[]
-  products Product[]
+  products             Product[]
 
   @@index([name])
   @@map("productcategories")
 }
 
 model ProductSubCategory {
-  productSubCategoryId String @id @default(cuid())
-  name String
-  slug String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  productCategoryId String
-  productCategory ProductCategory @relation(fields: [productCategoryId], references: [productCategoryId])
-  products Product[]
+  productSubCategoryId String          @id @default(cuid())
+  name                 String
+  slug                 String          @unique
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  productCategoryId    String
+  productCategory      ProductCategory @relation(fields: [productCategoryId], references: [productCategoryId])
+  products             Product[]
 
   @@index([name])
   @@map("productsubcategories")
 }
 
 model ProductImage {
-  productImageId  String  @id @default(cuid())
-  productId       String
-  imageUrl        String
-  publicUrl       String
-  product         Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
-
+  productImageId String  @id @default(cuid())
+  productId      String
+  imageUrl       String
+  publicUrl      String
+  product        Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
 
   @@map("productimages")
 }
@@ -93,22 +109,21 @@ model Cart {
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  totalPrice Int       @default(0)
+  status    String  @default("pending_submission")
   order     Order?
-  inquiry   Inquiry?
 
   @@map("carts")
 }
 
-
 model CartItem {
-  cartItemId String  @id @default(cuid())
-  productId  String
-  product    Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
-  quantity   Int
+  cartItemId    String  @id @default(cuid())
+  productId     String
+  product       Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  quantity      Int
   customization String
-  cartId     String
-  cart       Cart    @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
+  cartId        String
+  cart          Cart    @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
+  finalPrice    Int?
 
   @@map("cartitems")
 }
@@ -144,45 +159,44 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  username      String?
-  name          String?
-  gender        String?
-  password      String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  phoneNumber   String?
-  fullAddress   String?
-  dateOfBirth   DateTime?
-  about         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  scope         String?    @default("member")
-  provinceId    String?
-  cityId        String?
-  province      Provinces?  @relation(fields: [provinceId], references: [provinceId])
-  city          Cities?    @relation(fields: [cityId], references: [cityId])
-  wishlist      UserWishlist[]
+  id             String          @id @default(cuid())
+  username       String?
+  name           String?
+  gender         String?
+  password       String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  image          String?
+  phoneNumber    String?
+  fullAddress    String?
+  dateOfBirth    DateTime?
+  about          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  scope          String?         @default("member")
+  provinceId     String?
+  cityId         String?
+  province       Provinces?      @relation(fields: [provinceId], references: [provinceId])
+  city           Cities?         @relation(fields: [cityId], references: [cityId])
+  wishlist       UserWishlist[]
   productReviews ProductReview[]
-  accounts      Account[]
-  sessions      Session[]
-  cart          Cart[]
-  orders        Order[]
-  invoices      Invoice[]
-  inquiry       Inquiry[]
+  accounts       Account[]
+  sessions       Session[]
+  cart           Cart[]
+  orders         Order[]
+  invoices       Invoice[]
 
   @@map("users")
 }
 
 model UserWishlist {
-  userWishlistId String @id @default(cuid())
-  userId    String
-  productId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  userWishlistId String   @id @default(cuid())
+  userId         String
+  productId      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product  @relation(fields: [productId], references: [productId], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@index([userId, productId])
@@ -199,86 +213,72 @@ model VerificationToken {
 }
 
 model Provinces {
-  provinceId   String      @id @default(cuid())
-  name         String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  cities       Cities[]
-  users        User[]
+  provinceId String   @id @default(cuid())
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  cities     Cities[]
+  users      User[]
 
   @@map("provinces")
 }
 
 model Cities {
-  cityId     String      @id @default(cuid())
+  cityId     String    @id @default(cuid())
   name       String
   provinceId String
-  province   Provinces   @relation(fields: [provinceId], references: [provinceId])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  province   Provinces @relation(fields: [provinceId], references: [provinceId])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   users      User[]
 
   @@map("cities")
 }
 
-model Inquiry {
-  inquiryId    String   @id @default(cuid())
-  userId       String   
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cartId       String   @unique
-  cart         Cart     @relation(fields: [cartId], references: [cartId])
-  status       String
-  adminReply   String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@map("inquiries")
-}
-
 model Order {
-  orderId         String    @id @default(cuid())
+  orderId         String   @id @default(cuid())
   userId          String
-  cartId          String    @unique
-  status          String   
+  cartId          String   @unique
+  status          String
   shippingStatus  String
   shippingAddress String
-  totalWeight     Int      
-  totalPrice      Int
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cart            Cart      @relation(fields: [cartId], references: [cartId])
-  invoice         Invoice?
-  payments        Payment[]
-  paymentDetails  PaymentDetails?
+  totalWeight     Int
+  totalPrice      Int? // Changed to optional
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cart           Cart            @relation(fields: [cartId], references: [cartId])
+  invoice        Invoice?
+  payments       Payment[]
+  paymentDetails PaymentDetails?
 
   @@index([userId, status])
   @@map("orders")
 }
 
 model PaymentDetails {
-  paymentDetailsId String @id @default(cuid())
-  orderId          String @unique
+  paymentDetailsId String  @id @default(cuid())
+  orderId          String  @unique
   snapToken        String?
   snapRedirectUrl  String?
-  order            Order @relation(fields: [orderId], references: [orderId])
+  order            Order   @relation(fields: [orderId], references: [orderId])
 
   @@map("payment_details")
 }
 
 model Invoice {
-  invoiceId       String   @id @default(cuid())
-  orderId         String   @unique
-  userId          String
-  name            String
-  phoneNumber     String
-  totalPrice      Int
-  weight          Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  order           Order   @relation(fields: [orderId], references: [orderId])
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoiceId   String   @id @default(cuid())
+  orderId     String   @unique
+  userId      String
+  name        String
+  phoneNumber String
+  totalPrice  Int
+  weight      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  order       Order    @relation(fields: [orderId], references: [orderId])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("invoices")
 }
@@ -292,7 +292,7 @@ model Payment {
   status        String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  order         Order  @relation(fields: [orderId], references: [orderId])
+  order         Order    @relation(fields: [orderId], references: [orderId])
 
   @@index([orderId, status])
   @@map("payments")

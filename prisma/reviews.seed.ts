@@ -2,20 +2,20 @@ import { prisma } from "@/lib/db/prisma";
 
 const productReviewData = [
     {
-        productId: 'clzco3cly001dfg4452htmsds',
-        userId: 'clzco7k990003fgo8bh1f5rs4',
+        productId: 'cm0t6idhd001dcdpc0i6gf8u8',
+        userId: 'cm0t6m4hj0000cdjgmqlofwo4',
         review: 'Produk magnet dari CV Karya Cipta Magnet sangat berkualitas tinggi. Kekuatan magnetnya luar biasa dan tahan lama. Saya sangat puas dengan performa dan ketahanannya. Cocok untuk berbagai aplikasi industri maupun rumah tangga. Pelayanan pelanggan mereka juga sangat baik dan profesional. Sangat direkomendasikan!',
         rating: 5
     },
     {
-        productId: 'clzco3cly001dfg4452htmsds',
-        userId: 'clzcwzgck0000fglcrxkytchi',
+        productId: 'cm0t6idhd001dcdpc0i6gf8u8',
+        userId: 'cm0t6n4p80001cdjgzzcp4qiv',
         review: 'Saya baru saja mencoba magnet dari CV Karya Cipta Magnet dan sangat terkesan. Kualitasnya benar-benar unggul, dengan daya tarik magnet yang kuat dan konsisten. Produk ini terbukti tahan lama dan cocok untuk berbagai kebutuhan, baik di industri maupun rumah tangga. Yang membuat saya lebih puas adalah layanan pelanggan mereka yang responsif dan membantu. Harga produk ini sepadan dengan kualitasnya. Saya pasti akan membeli lagi dan merekomendasikannya kepada rekan-rekan.',
         rating: 5
     },
     {
-        productId: 'clzco3cly001dfg4452htmsds',
-        userId: 'clzcx0gli0003fglcshyxuxmn',
+        productId: 'cm0t6idhd001dcdpc0i6gf8u8',
+        userId: 'cm0t6nllz0002cdjgbtojcvst',
         review: 'Magnet dari CV Karya Cipta Magnet benar-benar mengagumkan! Saya menggunakannya untuk proyek DIY di rumah dan hasilnya luar biasa. Kekuatan magnetnya sangat konsisten dan tahan lama. Yang paling mengesankan adalah fleksibilitas penggunaannya - bisa dipakai untuk berbagai keperluan. Layanan pelanggan mereka juga sangat membantu ketika saya memiliki pertanyaan. Meski harganya sedikit lebih tinggi dari produk lain, kualitasnya benar-benar sepadan. Sangat merekomendasikan untuk siapa saja yang mencari magnet berkualitas tinggi!',
         rating: 4
     },

@@ -2,29 +2,68 @@
 
 import { Popover, Transition } from "@/app/headlessui";
 import Prices from "@/components/Prices";
-import { Product, PRODUCTS } from "@/data/data";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import ButtonSecondary from "@/shared/Button/ButtonSecondary";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { ICartData } from "../../../@types/definition";
+import { RemoveFromCart } from "@/lib/action";
+import toast from "react-hot-toast";
 
 export default function CartDropdown() {
-  const renderProduct = (item: Product, index: number, close: () => void) => {
-    const { name, price, image } = item;
+  const { data: session } = useSession();
+  const [cartData, setCartData] = useState<ICartData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const response = await axios.get("/api/cart");
+        setCartData(response.data);
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (session?.user) {
+      fetchCartData();
+    }
+  }, [session]);
+
+  const handleRemoveFromCart = async (cartItemId: string) => {
+    const response = await RemoveFromCart(cartItemId);
+    if (response.success) {
+      toast.success(response.message);
+      // Refresh cart data after removal
+      const updatedCartData = await axios.get("/api/cart");
+      setCartData(updatedCartData.data);
+    } else {
+      toast.error("Error removing item from cart");
+    }
+  };
+
+  const renderProduct = (item: any, index: number, close: () => void) => {
+    const { product, quantity, customization } = item;
+    const { ProductImages, name, priceRange } = product;
+
     return (
       <div key={index} className="flex py-5 last:pb-0">
         <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
           <Image
             fill
-            src={image}
+            src={ProductImages[0]?.imageUrl}
             alt={name}
             className="h-full w-full object-contain object-center"
           />
           <Link
             onClick={close}
             className="absolute inset-0"
-            href={"/product-detail"}
+            href={`/product/${product.slug}`}
           />
         </div>
 
@@ -33,26 +72,27 @@ export default function CartDropdown() {
             <div className="flex justify-between ">
               <div>
                 <h3 className="text-base font-medium ">
-                  <Link onClick={close} href={"/product-detail"}>
+                  <Link onClick={close} href={`/product/${product.slug}`}>
                     {name}
                   </Link>
                 </h3>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  <span>{`Natural`}</span>
-                  <span className="mx-2 border-l border-slate-200 dark:border-slate-700 h-4"></span>
-                  <span>{"XL"}</span>
-                </p>
+                {customization && (
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    Kustomisasi: {customization}
+                  </p>
+                )}
               </div>
-              <Prices price={price} className="mt-0.5" />
+              <Prices price={priceRange} className="mt-0.5" />
             </div>
           </div>
           <div className="flex flex-1 items-end justify-between text-sm">
-            <p className="text-gray-500 dark:text-slate-400">{`Qty 1`}</p>
+            <p className="text-gray-500 dark:text-slate-400">Qty {quantity}</p>
 
             <div className="flex">
               <button
                 type="button"
-                className="font-medium text-primary-6000 dark:text-primary-500 "
+                className="font-medium text-primary-6000 dark:text-primary-500"
+                onClick={() => handleRemoveFromCart(item.cartItemId)}
               >
                 Remove
               </button>
@@ -72,9 +112,11 @@ export default function CartDropdown() {
                 ${open ? "" : "text-opacity-90"}
                  group w-10 h-10 sm:w-12 sm:h-12 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 relative`}
           >
-            <div className="w-3.5 h-3.5 flex items-center justify-center bg-primary-500 absolute top-1.5 right-1.5 rounded-full text-[10px] leading-none text-white font-medium">
-              <span className="mt-[1px]">3</span>
-            </div>
+            {cartData && (
+              <div className="w-3.5 h-3.5 flex items-center justify-center bg-primary-500 absolute top-1.5 right-1.5 rounded-full text-[10px] leading-none text-white font-medium">
+                <span className="mt-[1px]">{cartData.items.length}</span>
+              </div>
+            )}
             <svg
               className="w-6 h-6"
               viewBox="0 0 24 24"
@@ -129,41 +171,78 @@ export default function CartDropdown() {
             <Popover.Panel className="hidden md:block absolute z-10 w-screen max-w-xs sm:max-w-md px-4 mt-3.5 -right-28 sm:right-0 sm:px-0">
               <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10">
                 <div className="relative bg-white dark:bg-neutral-800">
-                  <div className="max-h-[60vh] p-5 overflow-y-auto hiddenScrollbar">
-                    <h3 className="text-xl font-semibold">Shopping cart</h3>
-                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
-                      {[PRODUCTS[0], PRODUCTS[1], PRODUCTS[2]].map(
-                        (item, index) => renderProduct(item, index, close)
-                      )}
+                  {loading ? (
+                    <div className="p-5 space-y-4">
+                      <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+                      <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
                     </div>
-                  </div>
-                  <div className="bg-neutral-50 dark:bg-slate-900 p-5">
-                    <p className="flex justify-between font-semibold text-slate-900 dark:text-slate-100">
-                      <span>
-                        <span>Subtotal</span>
-                        <span className="block text-sm text-slate-500 dark:text-slate-400 font-normal">
-                          Shipping and taxes calculated at checkout.
-                        </span>
-                      </span>
-                      <span className="">$299.00</span>
-                    </p>
-                    <div className="flex space-x-2 mt-5">
-                      <ButtonSecondary
-                        href="/cart"
-                        className="flex-1 border border-slate-200 dark:border-slate-700"
-                        onClick={close}
+                  ) : !cartData || cartData.items.length === 0 ? (
+                    <div className="p-5 flex flex-col items-center justify-center">
+                      <svg
+                        className="w-16 h-16 text-gray-400 mb-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        View cart
-                      </ButtonSecondary>
-                      <ButtonPrimary
-                        href="/checkout"
-                        onClick={close}
-                        className="flex-1"
-                      >
-                        Check out
-                      </ButtonPrimary>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                      <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Keranjang kosong</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Tambahkan beberapa item untuk memulai!</p>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="max-h-[60vh] p-5 overflow-y-auto hiddenScrollbar">
+                        <h3 className="text-xl font-semibold">Shopping cart</h3>
+                        <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                          {cartData.items.map((item, index) =>
+                            renderProduct(item, index, close)
+                          )}
+                        </div>
+                      </div>
+                      <div className="bg-neutral-50 dark:bg-slate-900 p-5">
+                        <p className="flex justify-between font-semibold text-slate-900 dark:text-slate-100">
+                          <span>
+                            <span>Subtotal</span>
+                            <span className="block text-sm text-slate-500 dark:text-slate-400 font-normal">
+                              Shipping and taxes calculated at checkout.
+                            </span>
+                          </span>
+                          <span className="">
+                            {cartData.allItemsPriced
+                              ? `Rp${cartData.totalPrice.toLocaleString()}`
+                              : "Menunggu Harga Final"}
+                          </span>
+                        </p>
+                        <div className="flex space-x-2 mt-5">
+                          <ButtonSecondary
+                            href="/cart"
+                            className="flex-1 border border-slate-200 dark:border-slate-700"
+                            onClick={close}
+                          >
+                            View cart
+                          </ButtonSecondary>
+                          <ButtonPrimary
+                            href="/checkout"
+                            onClick={close}
+                            className="flex-1"
+                            disabled={!cartData.allItemsPriced}
+                          >
+                            {cartData.allItemsPriced
+                              ? "Check out"
+                              : "Menunggu Harga Final"}
+                          </ButtonPrimary>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </Popover.Panel>

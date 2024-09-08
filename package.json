@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node --require esbuild-register prisma/locations.seed.ts",
+    "seed": "node --require esbuild-register prisma/reviews.seed.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

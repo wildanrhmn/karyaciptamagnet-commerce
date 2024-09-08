@@ -14,17 +14,23 @@ import Policy from "./Policy";
 import ReviewItem from "@/components/ReviewItem";
 import ButtonSecondary from "@/shared/Button/ButtonSecondary";
 import ModalViewAllReviews from "./ModalViewAllReviews";
-import NotifyAddTocart from "@/components/NotifyAddTocart";
 import Image from "next/image";
 import AccordionInfo from "@/components/AccordionInfo";
 import axios from "axios";
+import { AddToCart } from "@/lib/action";
+import { useSession } from "next-auth/react";
+import { Transition } from "@/app/headlessui";
+import { useRouter } from "next/navigation";
 
 const ProductDetailPage = ({ params }: { params: { slug: string } }) => {
   const [productDetail, setProductDetail] = useState({} as any);
   const [loading, setLoading] = useState(true);
-  const [qualitySelected, setQualitySelected] = useState(1);
+  const [quantity, setQuantity] = useState(1);
+  const [customization, setCustomization] = useState("");
   const [isOpenModalViewAllReviews, setIsOpenModalViewAllReviews] =
     useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -40,67 +46,90 @@ const ProductDetailPage = ({ params }: { params: { slug: string } }) => {
     fetchProductDetail();
   }, [params.slug]);
 
-  if (loading) {
-    return (
-      <div className="nc-ProductDetailPage container mt-5 lg:mt-11">
-        <div className="lg:flex">
-          {/* CONTENT */}
-          <div className="w-full lg:w-[55%]">
-            {/* HEADING */}
-            <div className="relative">
-              <div className="aspect-w-16 aspect-h-16 relative bg-gray-200 animate-pulse rounded-2xl"></div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 mt-3 sm:gap-6 sm:mt-6 xl:gap-8 xl:mt-8">
-              {[1, 2].map((item, index) => (
-                <div
-                  key={index}
-                  className="aspect-w-11 xl:aspect-w-10 2xl:aspect-w-11 aspect-h-16 relative bg-gray-200 animate-pulse rounded-2xl"
-                ></div>
-              ))}
-            </div>
-          </div>
+  const notifyAddTocart = async () => {
+    if (!session?.user) {
+      toast.error("Anda harus login terlebih dahulu");
+      return;
+    }
 
-          {/* SIDEBAR */}
-          <div className="w-full lg:w-[45%] pt-10 lg:pt-0 lg:pl-7 xl:pl-9 2xl:pl-10">
-            <div className="space-y-7 2xl:space-y-8">
-              <div className="flex flex-col gap-4">
-                <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-                <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse"></div>
-              </div>
-              <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
-              <div className="flex space-x-3.5">
-                <div className="h-12 bg-gray-200 rounded w-1/4 animate-pulse"></div>
-                <div className="h-12 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-              </div>
-              <div className="h-40 bg-gray-200 rounded w-full animate-pulse"></div>
-            </div>
-          </div>
+    const result = await AddToCart(productDetail.productId, session.user.id, quantity, customization);
+
+    if (result.success) {
+      toast.custom(
+        (t) => (
+          <Transition
+            appear
+            show={t.visible}
+            className="p-4 max-w-md w-full bg-white dark:bg-slate-800 shadow-lg rounded-2xl pointer-events-auto ring-1 ring-black/5 dark:ring-white/10 text-slate-900 dark:text-slate-200"
+            enter="transition-all duration-150"
+            enterFrom="opacity-0 translate-x-20"
+            enterTo="opacity-100 translate-x-0"
+            leave="transition-all duration-150"
+            leaveFrom="opacity-100 translate-x-0"
+            leaveTo="opacity-0 translate-x-20"
+          >
+            <p className="block text-base font-semibold leading-none">
+              {result.message}
+            </p>
+            <div className="border-t border-slate-2000 dark:border-slate-7000 my-4" />
+            {renderProductCartOnNotify({ product: productDetail })}
+          </Transition>
+        ),
+        {
+          position: "top-right",
+          id: String(productDetail?.productId) || "product-detail",
+          duration: 3000,
+        }
+      );
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const renderProductCartOnNotify = ({ product }: { product: any }) => {
+    return (
+      <div className="flex ">
+        <div className="h-24 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
+          <Image
+            width={80}
+            height={96}
+            src={product?.ProductImages[0].imageUrl}
+            alt={product?.name}
+            className="absolute object-cover object-center"
+          />
         </div>
 
-        {/* DETAIL AND REVIEW */}
-        <div className="mt-12 sm:mt-16 space-y-10 sm:space-y-16">
-          <div className="h-60 bg-gray-200 rounded w-full animate-pulse"></div>
-          <div className="h-40 bg-gray-200 rounded w-full animate-pulse"></div>
-          <div className="h-80 bg-gray-200 rounded w-full animate-pulse"></div>
+        <div className="ms-4 flex flex-1 flex-col">
+          <div>
+            <div className="flex justify-between ">
+              <div>
+                <h3 className="text-base font-medium ">{product?.name}</h3>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-4000">
+                  <span>{product?.productCategory.name}</span>
+                  <span className="mx-2 border-s border-slate-200 dark:border-slate-700 h-4"></span>
+                  <span>{product?.productSubCategory.name}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-1 items-end justify-between text-sm">
+            <p className="text-gray-500 dark:text-slate-400">Qty {quantity}</p>
+
+            <div className="flex">
+              <button
+                type="button"
+                className="font-medium text-primary-6000 dark:text-primary-500 "
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push("/cart");
+                }}
+              >
+                Lihat Keranjang
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    );
-  }
-
-  const notifyAddTocart = () => {
-    toast.custom(
-      (t) => (
-        <NotifyAddTocart
-          productImage={productDetail?.ProductImages[0]?.imageUrl}
-          show={t.visible}
-          name={productDetail?.name}
-          productCategory={productDetail?.productCategory.name}
-          productSubCategory={productDetail?.productSubCategory.name}
-          priceRange={productDetail?.priceRange}
-          quantity={qualitySelected}
-        />
-      ),
-      { position: "top-right", id: "nc-product-notify", duration: 3000 }
     );
   };
 
@@ -152,12 +181,32 @@ const ProductDetailPage = ({ params }: { params: { slug: string } }) => {
           </div>
         </div>
 
+        {/* ---------- Customization Text Field ---------- */}
+        <div className="space-y-2">
+          <label htmlFor="customization" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Kustomisasi Produk
+          </label>
+          <textarea
+            id="customization"
+            name="customization"
+            rows={3}
+            className="w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 dark:bg-slate-800 dark:text-gray-300 dark:border-gray-600 dark:focus:ring-blue-600 dark:focus:border-blue-600"
+            placeholder="Masukan permintaan kustomisasi disini..."
+            value={customization}
+            onChange={(e) => setCustomization(e.target.value)}
+          ></textarea>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Tambahkan instruksi khusus atau permintaan kustomisasi untuk produk ini.
+          </p>
+        </div>
+
+
         {/*  ---------- 4  QTY AND ADD TO CART BUTTON */}
         <div className="flex space-x-3.5">
           <div className="flex items-center justify-center bg-slate-100/70 dark:bg-slate-800/70 px-2 py-3 sm:p-3.5 rounded-full">
             <NcInputNumber
-              defaultValue={qualitySelected}
-              onChange={setQualitySelected}
+              defaultValue={quantity}
+              onChange={setQuantity}
             />
           </div>
           <ButtonPrimary
@@ -226,6 +275,53 @@ const ProductDetailPage = ({ params }: { params: { slug: string } }) => {
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="nc-ProductDetailPage container mt-5 lg:mt-11">
+        <div className="lg:flex">
+          {/* CONTENT */}
+          <div className="w-full lg:w-[55%]">
+            {/* HEADING */}
+            <div className="relative">
+              <div className="aspect-w-16 aspect-h-16 relative bg-gray-200 animate-pulse rounded-2xl"></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-3 sm:gap-6 sm:mt-6 xl:gap-8 xl:mt-8">
+              {[1, 2].map((item, index) => (
+                <div
+                  key={index}
+                  className="aspect-w-11 xl:aspect-w-10 2xl:aspect-w-11 aspect-h-16 relative bg-gray-200 animate-pulse rounded-2xl"
+                ></div>
+              ))}
+            </div>
+          </div>
+
+          {/* SIDEBAR */}
+          <div className="w-full lg:w-[45%] pt-10 lg:pt-0 lg:pl-7 xl:pl-9 2xl:pl-10">
+            <div className="space-y-7 2xl:space-y-8">
+              <div className="flex flex-col gap-4">
+                <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+              </div>
+              <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+              <div className="flex space-x-3.5">
+                <div className="h-12 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+                <div className="h-12 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+              </div>
+              <div className="h-40 bg-gray-200 rounded w-full animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* DETAIL AND REVIEW */}
+        <div className="mt-12 sm:mt-16 space-y-10 sm:space-y-16">
+          <div className="h-60 bg-gray-200 rounded w-full animate-pulse"></div>
+          <div className="h-40 bg-gray-200 rounded w-full animate-pulse"></div>
+          <div className="h-80 bg-gray-200 rounded w-full animate-pulse"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`nc-ProductDetailPage `}>
