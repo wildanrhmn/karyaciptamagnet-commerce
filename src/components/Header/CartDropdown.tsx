@@ -18,6 +18,8 @@ export default function CartDropdown() {
   const [cartData, setCartData] = useState<ICartData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.info(session)
+
   useEffect(() => {
     const fetchCartData = async () => {
       try {
@@ -39,7 +41,6 @@ export default function CartDropdown() {
     const response = await RemoveFromCart(cartItemId);
     if (response.success) {
       toast.success(response.message);
-      // Refresh cart data after removal
       const updatedCartData = await axios.get("/api/cart");
       setCartData(updatedCartData.data);
     } else {
@@ -48,56 +49,49 @@ export default function CartDropdown() {
   };
 
   const renderProduct = (item: any, index: number, close: () => void) => {
-    const { product, quantity, customization } = item;
+    const { product, quantity } = item;
     const { ProductImages, name, priceRange } = product;
-
+  
     return (
-      <div key={index} className="flex py-5 last:pb-0">
-        <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
-          <Image
-            fill
-            src={ProductImages[0]?.imageUrl}
-            alt={name}
-            className="h-full w-full object-contain object-center"
-          />
-          <Link
-            onClick={close}
-            className="absolute inset-0"
-            href={`/product/${product.slug}`}
-          />
+      <div key={index} className="flex items-center justify-between py-4 border-b border-slate-200 dark:border-slate-700 last:border-b-0 dark:hover:bg-slate-800 duration-300">
+        <div className="flex items-center space-x-4">
+          <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100 shadow-sm">
+            <Image
+              fill
+              src={ProductImages[0]?.imageUrl}
+              alt={name}
+              className="object-cover"
+            />
+            <Link
+              onClick={close}
+              className="absolute inset-0 transition-opacity duration-300 hover:opacity-75"
+              href={`/product/${product.slug}`}
+            />
+          </div>
+  
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+              <Link onClick={close} href={`/product/${product.slug}`} className="hover:underline">
+                {name}
+              </Link>
+            </h3>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Quantity: {quantity}
+            </p>
+            <div className="mt-2">
+              <Prices price={priceRange} className="text-sm font-medium text-primary-600 dark:text-primary-400" />
+            </div>
+          </div>
         </div>
-
-        <div className="ml-4 flex flex-1 flex-col">
-          <div>
-            <div className="flex justify-between ">
-              <div>
-                <h3 className="text-base font-medium ">
-                  <Link onClick={close} href={`/product/${product.slug}`}>
-                    {name}
-                  </Link>
-                </h3>
-                {customization && (
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    Kustomisasi: {customization}
-                  </p>
-                )}
-              </div>
-              <Prices price={priceRange} className="mt-0.5" />
-            </div>
-          </div>
-          <div className="flex flex-1 items-end justify-between text-sm">
-            <p className="text-gray-500 dark:text-slate-400">Qty {quantity}</p>
-
-            <div className="flex">
-              <button
-                type="button"
-                className="font-medium text-primary-6000 dark:text-primary-500"
-                onClick={() => handleRemoveFromCart(item.cartItemId)}
-              >
-                Remove
-              </button>
-            </div>
-          </div>
+  
+        <div className="flex flex-col items-end space-y-2">
+          <button
+            type="button"
+            className="text-xs font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-full px-2 py-1"
+            onClick={() => handleRemoveFromCart(item.cartItemId)}
+          >
+            Remove
+          </button>
         </div>
       </div>
     );
@@ -171,7 +165,18 @@ export default function CartDropdown() {
             <Popover.Panel className="hidden md:block absolute z-10 w-screen max-w-xs sm:max-w-md px-4 mt-3.5 -right-28 sm:right-0 sm:px-0">
               <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10">
                 <div className="relative bg-white dark:bg-neutral-800">
-                  {loading ? (
+                  {!session ? (
+                    <div className="p-5 space-y-4 flex flex-col items-center justify-center text-center">
+                      <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Masuk untuk Melihat Keranjang</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Silakan masuk untuk mulai berbelanja!</p>
+                      <ButtonPrimary className="mt-4">
+                        <Link href="/login">Masuk</Link>
+                      </ButtonPrimary>
+                    </div>
+                  ) : loading ? (
                     <div className="p-5 space-y-4">
                       <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
                       <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
@@ -200,45 +205,22 @@ export default function CartDropdown() {
                   ) : (
                     <>
                       <div className="max-h-[60vh] p-5 overflow-y-auto hiddenScrollbar">
-                        <h3 className="text-xl font-semibold">Shopping cart</h3>
+                        <h3 className="text-xl font-semibold">Keranjang Belanja</h3>
                         <div className="divide-y divide-slate-100 dark:divide-slate-700">
                           {cartData.items.map((item, index) =>
                             renderProduct(item, index, close)
                           )}
                         </div>
                       </div>
-                      <div className="bg-neutral-50 dark:bg-slate-900 p-5">
-                        <p className="flex justify-between font-semibold text-slate-900 dark:text-slate-100">
-                          <span>
-                            <span>Subtotal</span>
-                            <span className="block text-sm text-slate-500 dark:text-slate-400 font-normal">
-                              Shipping and taxes calculated at checkout.
-                            </span>
-                          </span>
-                          <span className="">
-                            {cartData.allItemsPriced
-                              ? `Rp${cartData.totalPrice.toLocaleString()}`
-                              : "Menunggu Harga Final"}
-                          </span>
-                        </p>
-                        <div className="flex space-x-2 mt-5">
+                      <div className="bg-neutral-50 dark:bg-slate-900 p-3">
+                        <div className="flex space-x-2">
                           <ButtonSecondary
                             href="/cart"
-                            className="flex-1 border border-slate-200 dark:border-slate-700"
+                            className="flex-1 border border-slate-200 dark:border-slate-700 text-[14px]"
                             onClick={close}
                           >
-                            View cart
+                            Lihat Keranjang
                           </ButtonSecondary>
-                          <ButtonPrimary
-                            href="/checkout"
-                            onClick={close}
-                            className="flex-1"
-                            disabled={!cartData.allItemsPriced}
-                          >
-                            {cartData.allItemsPriced
-                              ? "Check out"
-                              : "Menunggu Harga Final"}
-                          </ButtonPrimary>
                         </div>
                       </div>
                     </>
