@@ -20,10 +20,6 @@ const pages: {
     link: "/account",
   },
   {
-    name: "Daftar Simpan",
-    link: "/account-savelists",
-  },
-  {
     name: "Pesanan Saya",
     link: "/account-order",
   },

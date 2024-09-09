@@ -18,8 +18,6 @@ export default function CartDropdown() {
   const [cartData, setCartData] = useState<ICartData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.info(session)
-
   useEffect(() => {
     const fetchCartData = async () => {
       try {

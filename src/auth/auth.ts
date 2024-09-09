@@ -4,7 +4,6 @@ import NextAuth from 'next-auth';
 import { env } from "@/lib/env";
 import { authConfig } from './auth.config';
 import { prisma } from '@/lib/db/prisma';
-import { mergeAnonymousCartIntoUserCart } from "@/lib/db/cart";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { Adapter } from "next-auth/adapters";
@@ -106,9 +105,4 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-  events: {
-    async signIn({ user }: { user: any }) {
-      await mergeAnonymousCartIntoUserCart(user.id);
-    },
-  }
 });

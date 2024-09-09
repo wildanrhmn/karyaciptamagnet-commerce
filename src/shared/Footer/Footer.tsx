@@ -17,7 +17,7 @@ const widgetMenus: WidgetFooterMenu[] = [
       { href: "/", label: "Beranda" },
       { href: "/collection", label: "Produk" },
       { href: "/about", label: "Tentang Kami" },
-      { href: "/contact", label: "Kontak" },
+      // { href: "/contact", label: "Kontak" },
     ],
   },
   {

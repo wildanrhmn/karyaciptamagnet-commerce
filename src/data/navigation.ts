@@ -19,7 +19,6 @@ export const MEGAMENU_TEMPLATES: NavItemType[] = [
     children: [
       { id: ncNanoId(), href: "/collection", name: "Category Page 1" },
       { id: ncNanoId(), href: "/cart", name: "Cart Page" },
-      { id: ncNanoId(), href: "/checkout", name: "Checkout Page" },
     ],
   },
   {
@@ -27,8 +26,6 @@ export const MEGAMENU_TEMPLATES: NavItemType[] = [
     href: "/#",
     name: "Other Pages",
     children: [
-      { id: ncNanoId(), href: "/checkout", name: "Checkout Page" },
-      { id: ncNanoId(), href: "/search", name: "Search Page" },
       { id: ncNanoId(), href: "/cart", name: "Cart Page" },
       { id: ncNanoId(), href: "/account", name: "Accout Page" },
       { id: ncNanoId(), href: "/account-order", name: "Order Page" },
@@ -62,16 +59,6 @@ const OTHER_PAGE_CHILD: NavItemType[] = [
   },
   {
     id: ncNanoId(),
-    href: "/checkout",
-    name: "Checkout Page",
-  },
-  {
-    id: ncNanoId(),
-    href: "/search",
-    name: "Search Page",
-  },
-  {
-    id: ncNanoId(),
     href: "/account",
     name: "Account Page",
   },
@@ -88,11 +75,6 @@ const OTHER_PAGE_CHILD: NavItemType[] = [
       },
       {
         id: ncNanoId(),
-        href: "/contact",
-        name: "Contact us",
-      },
-      {
-        id: ncNanoId(),
         href: "/login",
         name: "Login",
       },
@@ -102,24 +84,6 @@ const OTHER_PAGE_CHILD: NavItemType[] = [
         name: "Signup",
       },
       { id: ncNanoId(), href: "/forgot-pass", name: "Forgot Password" },
-    ],
-  },
-  {
-    id: ncNanoId(),
-    href: "/blog",
-    name: "Blog Page",
-    type: "dropdown",
-    children: [
-      {
-        id: ncNanoId(),
-        href: "/blog",
-        name: "Blog Page",
-      },
-      {
-        id: ncNanoId(),
-        href: "/blog-single",
-        name: "Blog Single",
-      },
     ],
   },
 ];
@@ -140,24 +104,4 @@ export const NAVIGATION_DEMO_2: NavItemType[] = [
     href: "/about",
     name: "Tentang Kami",
   },
-
-  {
-    id: ncNanoId(),
-    href: "/contact",
-    name: "Kontak",
-  },
-  // {
-  //   id: ncNanoId(),
-  //   href: "/collection",
-  //   name: "Templates",
-  //   type: "megaMenu",
-  //   children: MEGAMENU_TEMPLATES,
-  // },
-  // {
-  //   id: ncNanoId(),
-  //   href: "/search",
-  //   name: "Explore",
-  //   type: "dropdown",
-  //   children: OTHER_PAGE_CHILD,
-  // },
 ];

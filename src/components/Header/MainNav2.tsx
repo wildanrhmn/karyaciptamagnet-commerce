@@ -6,7 +6,6 @@ import MenuBar from "@/shared/MenuBar/MenuBar";
 import LangDropdown from "./LangDropdown";
 import AvatarDropdown from "./AvatarDropdown";
 import TemplatesDropdown from "./TemplatesDropdown";
-import DropdownCategories from "./DropdownCategories";
 import CartDropdown from "./CartDropdown";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
@@ -52,7 +51,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
         className="flex-1 py-2 text-slate-900 dark:text-slate-100"
         onSubmit={(e) => {
           e.preventDefault();
-          router.push("/search");
+          // router.push("/search");
         }}
       >
         <div className="bg-slate-50 dark:bg-slate-800 flex items-center space-x-1.5 px-5 h-full rounded">
@@ -85,11 +84,11 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
             {!showSearchForm && (
               <div className="hidden md:block h-10 border-l border-slate-200 dark:border-slate-700"></div>
             )}
-            {!showSearchForm && (
+            {/* {!showSearchForm && (
               <div className="hidden md:block">
                 <DropdownCategories />
               </div>
-            )}
+            )} */}
           </div>
 
           {showSearchForm && (
