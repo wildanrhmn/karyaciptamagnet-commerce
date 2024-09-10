@@ -7,30 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum CartStatus {
-  DRAFT
-  PENDING_SUBMISSION
-  SUBMITTED_FOR_PRICING
-  ADMIN_REVIEWING
-  PRICED
-  AWAITING_PAYMENT
-  PAYMENT_PROCESSING
-  PAID
-  PREPARING
-  SHIPPED
-  DELIVERED
-  COMPLETED
-  CANCELLED
-  REFUNDED
-}
-
 model Product {
   productId            String             @id @default(cuid())
   name                 String
   slug                 String             @unique
   description          String             @db.VarChar(10000)
   smallDescription     String
-  weightRange          String
+  weight               Int
   priceRange           String
   productCategoryId    String
   productSubCategoryId String
@@ -109,7 +92,7 @@ model Cart {
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  status    String  @default("pending_submission")
+  status    String     @default("ORDER_DRAFT")
   order     Order?
 
   @@map("carts")

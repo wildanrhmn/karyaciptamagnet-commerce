@@ -140,7 +140,7 @@ const productData = [
         </ul>
         <p><span style="background-color:rgb(255,255,255);color:rgb(71,85,105);font-family:__Poppins_c3367d, __Poppins_Fallback_c3367d;font-size:14px;">Our neodymium disc magnets are manufactured to the highest quality standards, ensuring consistent performance and long-lasting magnetization. Contact us for custom sizes or specific grade requirements.</span></p>
     `,
-    weightRange: "1g - 500g",
+    weight: 100,
     priceRange: "Rp. 10.000 - Rp. 500.000",
     stock: 1000,
     categoryName: "Rare Earth Magnets",
@@ -223,7 +223,7 @@ async function seed() {
           slug: product.slug,
           smallDescription: product.smallDescription,
           description: product.description,
-          weightRange: product.weightRange,
+          weight: product.weight,
           priceRange: product.priceRange,
           stock: product.stock,
           productCategoryId: category.productCategoryId,

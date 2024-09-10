@@ -1,9 +1,61 @@
+"use client";
+
+import { useState } from "react";
 import Prices from "@/components/Prices";
 import { PRODUCTS } from "@/data/data";
 import ButtonSecondary from "@/shared/Button/ButtonSecondary";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+import OrderDetailsDialog from './orderDetailDialog';
+
+interface OrderDetails {
+  invoiceNumber: string;
+  purchaseDate: string;
+  products: {
+    name: string;
+    image: string | StaticImageData;
+    quantity: number;
+    price: number;
+  }[];
+  shipping: {
+    courier: string;
+    trackingNumber: string;
+    address: string;
+  };
+  totalPrice: number;
+}
 
 const AccountOrder = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
+
+  const dummyOrderDetails: OrderDetails = {
+    invoiceNumber: 'INV/20240819/MPL/4097099214',
+    purchaseDate: '19 Agustus 2024, 11:23 WIB',
+    products: [
+      {
+        name: 'CELANA PANJANG PUTIH CELANA PUTIH CHINO PANJANG CELANA PUTIH PRIA JUMBO - Abu-abu, 34',
+        image: PRODUCTS[0].image,
+        quantity: 1,
+        price: 109900
+      },
+    ],
+    shipping: {
+      courier: 'GoSend Bike - Instant 3 Jam',
+      trackingNumber: 'GK-11-778635498',
+      address: 'Wildan, 628517227947, Pamulang 2 , Jalan benda barat 13 RT 04 RW 10 Blok D33 No22 Pamulang, Kota Tangerang Selatan, Banten 15416'
+    },
+    totalPrice: 300200
+  };
+
+  const openDialog = () => {
+    setSelectedOrder(dummyOrderDetails);
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
+
   const renderProductItem = (product: any, index: number) => {
     const { image, name } = product;
     return (
@@ -55,7 +107,7 @@ const AccountOrder = () => {
 
   const renderOrder = () => {
     return (
-      <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden z-0">
+      <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden z-0 mt-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 sm:p-8 bg-slate-50 dark:bg-slate-500/5">
           <div>
             <p className="text-lg font-semibold">#WU3746HGG12</p>
@@ -69,8 +121,9 @@ const AccountOrder = () => {
             <ButtonSecondary
               sizeClass="py-2.5 px-4 sm:px-6"
               fontSize="text-sm font-medium"
+              onClick={openDialog}
             >
-              View Order
+              Detail Pesanan
             </ButtonSecondary>
           </div>
         </div>
@@ -82,11 +135,14 @@ const AccountOrder = () => {
   };
 
   return (
-    <div className="space-y-10 sm:space-y-12">
-      {/* HEADING */}
-      <h2 className="text-2xl sm:text-3xl font-semibold">Order History</h2>
+    <div>
+      <h2 className="text-2xl sm:text-3xl font-semibold">Histori Pemesanan</h2>
       {renderOrder()}
-      {renderOrder()}
+      <OrderDetailsDialog 
+        isOpen={isDialogOpen} 
+        onClose={closeDialog} 
+        orderDetails={selectedOrder}
+      />
     </div>
   );
 };

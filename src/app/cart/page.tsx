@@ -13,11 +13,26 @@ import { ICartData } from "../../../@types/definition";
 import { RemoveFromCart } from "@/lib/action";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
+import { useRouter } from "next/navigation";
+import { createOrder } from "@/lib/action";
 
 const CartPage = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [cartData, setCartData] = useState<ICartData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleCreateOrder = async () => {
+    if (!cartData) return;
+
+    const result = await createOrder(cartData.cartId);
+    if (result.success) {
+      toast.success("Pesanan berhasil dibuat. Menunggu penentuan harga.");
+      router.push('/account-order');
+    } else {
+      toast.error(result.error || "Gagal membuat pesanan. Silakan coba lagi.");
+    }
+  };
 
   useEffect(() => {
     const fetchCartData = async () => {
@@ -273,53 +288,13 @@ const CartPage = () => {
                     {cartData.items.length}
                   </span>
                 </div>
-                <div className="flex justify-between py-4">
-                  <span>Item Dengan Harga Final</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-200">
-                    {cartData.itemsWithFinalPrice} / {cartData.items.length}
-                  </span>
-                </div>
-                {cartData.allItemsPriced && (
-                  <>
-                    <div className="flex justify-between py-4">
-                      <span>Total Harga</span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-200">
-                        Rp{cartData.totalPrice.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between py-4">
-                      <span>Estimasi pengiriman</span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-200">
-                        Akan dihitung
-                      </span>
-                    </div>
-                  </>
-                )}
-                <div className="flex justify-between font-semibold text-slate-900 dark:text-slate-200 text-base pt-4">
-                  <span>Status</span>
-                  <span>
-                    {cartData.allItemsPriced
-                      ? "Siap Checkout"
-                      : "Menunggu Harga Final"}
-                  </span>
-                </div>
               </div>
               <ButtonPrimary
-                className={`mt-8 w-full ${
-                  cartData.status !== "pending_submission" &&
-                  cartData.status !== "priced" &&
-                  "opacity-50 cursor-not-allowed"
-                }`}
-                disabled={
-                  cartData.status !== "pending_submission" &&
-                  cartData.status !== "priced"
-                }
+                className={`mt-8 w-full`}
+                onClick={handleCreateOrder}
+                disabled={!cartData || cartData.items.length === 0}
               >
-                {cartData.status === "pending_submission"
-                  ? "Ajukan untuk Penentuan Harga"
-                  : cartData.status === "priced"
-                  ? "Bayar Sekarang"
-                  : "Menunggu Penentuan Harga"}
+                Ajukan Penentuan Harga
               </ButtonPrimary>
               {cartData.status === "submitted_submission" && (
                 <p className="mt-2 text-sm text-center text-slate-500 dark:text-slate-400">

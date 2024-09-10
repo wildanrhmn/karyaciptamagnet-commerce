@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
         const cart = await prisma.cart.findFirst({
             where: {
                 userId,
-                status: { not: "completed" }
+                status: "ORDER_DRAFT"
             },
             include: {
                 items: {

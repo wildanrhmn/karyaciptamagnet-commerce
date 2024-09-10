@@ -166,12 +166,12 @@ export async function UpdatePassword(formData: FormData) {
 export async function AddToCart(productId: string, userId: string, quantity: number = 1, customization: string = "") {
   try {
     let cart = await prisma.cart.findFirst({
-      where: { userId, status: "pending" },
+      where: { userId },
     });
 
     if (!cart) {
       cart = await prisma.cart.create({
-        data: { userId, status: "pending" },
+        data: { userId },
       });
     }
 
@@ -247,5 +247,50 @@ export async function RemoveFromCart(cartItemId: string) {
   } catch (error) {
     console.error("Gagal menghapus produk dari keranjang:", error);
     return { success: false, message: "Gagal menghapus produk dari keranjang" };
+  }
+}
+
+export async function createOrder(cartId: string) {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      throw new Error("Unauthorized");
+    }
+
+    const userId = session.user.id;
+
+    const cart = await prisma.cart.findUnique({
+      where: { cartId },
+      include: { items: true },
+    });
+
+    if (!cart) {
+      throw new Error("Cart not found or doesn't belong to the user");
+    }
+
+    const order = await prisma.order.create({
+      data: {
+        userId,
+        cartId,
+        status: "AWAITING_PRICE",
+        totalPrice: 0,
+        totalWeight: 0,
+        shippingStatus: "PENDING",
+        shippingAddress: "",
+      },
+    });
+
+    await prisma.cart.update({
+      where: { cartId },
+      data: { status: "ORDER_CREATED" },
+    });
+
+    revalidatePath('/cart');
+    revalidatePath('/myorder');
+
+    return { success: true, orderId: order.orderId };
+  } catch (error) {
+    console.error("Error creating order:", error);
+    return { success: false, error: (error as Error).message };
   }
 }
