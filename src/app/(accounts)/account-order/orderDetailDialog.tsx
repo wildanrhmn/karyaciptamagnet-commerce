@@ -4,27 +4,10 @@ import ButtonSecondary from "@/shared/Button/ButtonSecondary";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import { StaticImageData } from "next/image";
 
-interface OrderDetails {
-  invoiceNumber: string;
-  purchaseDate: string;
-  products: {
-    name: string;
-    image: string | StaticImageData;
-    quantity: number;
-    price: number;
-  }[];
-  shipping: {
-    courier: string;
-    trackingNumber: string;
-    address: string;
-  };
-  totalPrice: number;
-}
-
 interface OrderDetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  orderDetails: OrderDetails | null;
+  orderDetails: any;
 }
 
 const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
@@ -33,6 +16,22 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
   orderDetails,
 }) => {
   if (!isOpen || !orderDetails) return null;
+
+  function handleShippingStatus(status: string) {
+    switch (status) {
+      case "PENDING":
+        return "Menunggu Konfirmasi";
+      case "CONFIRMED":
+        return "Dikonfirmasi";
+      case "SHIPPING":
+        return "Dikirim";
+      case "DELIVERED":
+        return "Diterima";
+      case "CANCELLED":
+        return "Dibatalkan";
+    }
+  }
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -51,35 +50,41 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
 
         <div className="bg-gray-100 dark:bg-slate-700 p-4 rounded-lg mb-6">
           <p className="mb-2">
-            <span className="font-semibold">No. Invoice:</span>{" "}
-            <span className="text-blue-600">{orderDetails.invoiceNumber}</span>
+            <span className="font-semibold">No. Order:</span>{" "}
+            <span className="text-blue-600">#{orderDetails.orderId}</span>
           </p>
           <p>
             <span className="font-semibold">Tanggal Pembelian:</span>{" "}
-            <span className="text-green-600">{orderDetails.purchaseDate}</span>
+            <span className="text-green-600">
+              {new Date(orderDetails.createdAt).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+            </span>
           </p>
         </div>
 
         <div className="mb-6">
           <h3 className="font-semibold mb-3">Detail Produk</h3>
-          {orderDetails.products.map((product, index) => (
+          {orderDetails.cart.items.map((item: any, index: any) => (
             <div
               key={index}
-              className="flex items-start mb-4 bg-gray-50 dark:bg-slate-700 p-4 rounded-lg"
+              className="flex items-center mb-4 bg-gray-50 dark:bg-slate-700 p-4 rounded-lg"
             >
               <Image
-                src={product.image}
-                alt={product.name}
+                src={item.product.ProductImages[0].imageUrl}
+                alt={item.product.name}
                 width={60}
                 height={60}
                 className="rounded-md mr-4"
               />
               <div>
-                <p className="font-medium text-sm">{product.name}</p>
+                <p className="font-medium text-sm">{item.product.name}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {product.quantity} x{" "}
+                  {item.quantity} Qty x{" "}
                   <span className="text-green-600">
-                    Rp{product.price.toLocaleString()}
+                    Rp. {item.finalPrice ? item.finalPrice : item.product.priceRange}
                   </span>
                 </p>
               </div>
@@ -87,21 +92,16 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
           ))}
         </div>
 
+        <h3 className="font-semibold mb-3">Info Pengiriman</h3>
+
         <div className="bg-gray-100 dark:bg-slate-700 p-4 rounded-lg mb-6">
-          <h3 className="font-semibold mb-3">Info Pengiriman</h3>
           <p className="mb-2">
-            <span className="font-medium">Kurir:</span>{" "}
-            {orderDetails.shipping.courier}
-          </p>
-          <p className="mb-2">
-            <span className="font-medium">No Resi:</span>{" "}
-            <span className="text-blue-600">
-              {orderDetails.shipping.trackingNumber}
-            </span>
+            <span className="font-medium">Status Pengiriman:</span>{" "}
+            {handleShippingStatus(orderDetails.shippingStatus)}
           </p>
           <p>
             <span className="font-medium">Alamat:</span>{" "}
-            {orderDetails.shipping.address}
+            {orderDetails.shippingAddress ? orderDetails.shippingAddress : "Tidak ada alamat pengiriman"}
           </p>
         </div>
 
@@ -109,7 +109,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
           <p className="text-xl font-bold">
             Total:{" "}
             <span className="text-green-600">
-              Rp{orderDetails.totalPrice.toLocaleString()}
+              Rp. {orderDetails.totalPrice.toLocaleString()}
             </span>
           </p>
         </div>

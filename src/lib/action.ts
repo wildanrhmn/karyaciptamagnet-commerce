@@ -290,7 +290,22 @@ export async function createOrder(cartId: string) {
 
     return { success: true, orderId: order.orderId };
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("Gagal membuat pesanan:", error);
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+export async function deleteOrder(orderId: string, cartId: string) {
+  try {
+    await prisma.order.delete({
+      where: { orderId },
+    });
+
+    revalidatePath('/account-order');
+
+    return { success: true, message: "Berhasil menghapus pesanan" };
+  } catch (error) {
+    console.error("Gagal menghapus pesanan:", error);
     return { success: false, error: (error as Error).message };
   }
 }
