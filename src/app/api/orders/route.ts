@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
         },
         invoice: true,
         payments: true,
-        paymentDetails: true,
       },
       orderBy: {
         createdAt: "desc",
