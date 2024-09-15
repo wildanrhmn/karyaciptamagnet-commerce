@@ -226,38 +226,40 @@ model Order {
   shippingStatus  String
   shippingAddress String
   totalWeight     Int
-  totalPrice      Int? // Changed to optional
+  totalPrice      Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   cart           Cart            @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
   invoice        Invoice?
-  payments       Payment[]
-  paymentDetails PaymentDetails?
+  payments       Payment?
 
   @@index([userId, status])
   @@map("orders")
 }
 
-model PaymentDetails {
-  paymentDetailsId String  @id @default(cuid())
-  orderId          String  @unique
+model Payment {
+  paymentId        String   @id @default(cuid())
+  orderId          String   @unique
+  amount           Int
+  paymentMethod    String
+  transactionId    String?
+  status           String
   snapToken        String?
   snapRedirectUrl  String?
-  order            Order   @relation(fields: [orderId], references: [orderId])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  order            Order    @relation(fields: [orderId], references: [orderId])
 
-  @@map("payment_details")
+  @@index([orderId, status])
+  @@map("payments")
 }
 
 model Invoice {
   invoiceId   String   @id @default(cuid())
   orderId     String   @unique
   userId      String
-  name        String
-  phoneNumber String
-  totalPrice  Int
-  weight      Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   order       Order    @relation(fields: [orderId], references: [orderId])
@@ -266,17 +268,3 @@ model Invoice {
   @@map("invoices")
 }
 
-model Payment {
-  paymentId     String   @id @default(cuid())
-  orderId       String
-  amount        Int
-  paymentMethod String
-  transactionId String?
-  status        String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  order         Order    @relation(fields: [orderId], references: [orderId])
-
-  @@index([orderId, status])
-  @@map("payments")
-}
