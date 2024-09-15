@@ -3,8 +3,8 @@
 import bcrypt from "bcrypt";
 import cloudinary from "./cloudinary";
 
-import { IFormLoginInput } from "@/app/login/page";
-import { IFormRegisterInput } from "@/app/signup/page";
+import { IFormLoginInput } from "@/app/(commerce)/login/page";
+import { IFormRegisterInput } from "@/app/(commerce)/signup/page";
 
 import { AuthError } from "next-auth";
 import { prisma } from "./db/prisma";

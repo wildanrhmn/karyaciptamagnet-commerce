@@ -61,8 +61,13 @@ export default function AvatarDropdown() {
                             sizeClass="w-12 h-12"
                           />
                           <div className="flex-grow">
-                            <h4 className="font-semibold truncate max-w-[150px]">{session?.user.name || session?.user.username}</h4>
-                            <p className="text-xs mt-0.5">{session?.user?.scope?.charAt(0).toUpperCase() + session?.user?.scope?.slice(1)}</p>
+                            <h4 className="font-semibold truncate max-w-[150px]">
+                              {session?.user.name || session?.user.username}
+                            </h4>
+                            <p className="text-xs mt-0.5">
+                              {session?.user?.scope?.charAt(0).toUpperCase() +
+                                session?.user?.scope?.slice(1)}
+                            </p>
                           </div>
                         </div>
                         <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
@@ -106,6 +111,57 @@ export default function AvatarDropdown() {
 
                     {isLoggedIn && (
                       <>
+                        {isLoggedIn && session?.user?.scope !== "member" && (
+                          <Link
+                            href={"/dashboard/overview"}
+                            className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                            onClick={() => close()}
+                          >
+                            <div className="flex items-center justify-center flex-shrink-0 text-neutral-500 dark:text-neutral-300">
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M3 3h7v7H3V3z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M14 3h7v7h-7V3z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M14 14h7v7h-7v-7z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M3 14h7v7H3v-7z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </div>
+                            <div className="ml-4">
+                              <p className="text-sm font-medium">
+                                {"Masuk Dashboard"}
+                              </p>
+                            </div>
+                          </Link>
+                        )}
                         <Link
                           href={"/account"}
                           className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
@@ -141,33 +197,6 @@ export default function AvatarDropdown() {
                             </p>
                           </div>
                         </Link>
-
-                        {/* <Link
-                          href={"/account-savelists"}
-                          className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                          onClick={() => close()}
-                        >
-                          <div className="flex items-center justify-center flex-shrink-0 text-neutral-500 dark:text-neutral-300">
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                            >
-                              <path
-                                d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.68998C2 5.59998 4.49 3.09998 7.56 3.09998C9.38 3.09998 10.99 3.97998 12 5.33998C13.01 3.97998 14.63 3.09998 16.44 3.09998C19.51 3.09998 22 5.59998 22 8.68998C22 15.69 15.52 19.82 12.62 20.81Z"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </div>
-                          <div className="ml-4">
-                            <p className="text-sm font-medium ">{"Wishlist"}</p>
-                          </div>
-                        </Link> */}
-    
                       </>
                     )}
 

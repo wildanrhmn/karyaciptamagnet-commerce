@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ICartData } from "../../../@types/definition";
+import { ICartData } from "../../../../@types/definition";
 import { RemoveFromCart } from "@/lib/action";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
