@@ -297,15 +297,21 @@ export async function createOrder(cartId: string) {
 
 export async function deleteOrder(orderId: string, cartId: string) {
   try {
-    await prisma.order.delete({
-      where: { orderId },
+    await prisma.$transaction(async (prisma) => {
+      await prisma.order.delete({
+        where: { orderId },
+      });
+
+      await prisma.cart.delete({
+        where: { cartId },
+      });
     });
 
     revalidatePath('/account-order');
 
-    return { success: true, message: "Berhasil menghapus pesanan" };
+    return { success: true, message: "Berhasil menghapus pesanan dan keranjang" };
   } catch (error) {
-    console.error("Gagal menghapus pesanan:", error);
+    console.error("Gagal menghapus pesanan dan keranjang:", error);
     return { success: false, error: (error as Error).message };
   }
 }
