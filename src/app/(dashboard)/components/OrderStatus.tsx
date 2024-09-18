@@ -1,4 +1,4 @@
-import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ClockIcon, CogIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 export default function OrderStatus({ status }: { status: string }) {
@@ -15,6 +15,12 @@ export default function OrderStatus({ status }: { status: string }) {
       textColor: 'text-orange-800',
       icon: ClockIcon,
     },
+    PRODUCTION_IN_PROGRESS: {
+      label: 'Produksi Berlangsung',
+      bgColor: 'bg-indigo-100',
+      textColor: 'text-indigo-800',
+      icon: CogIcon,
+    },
     AWAITING_SHIPMENT: {
       label: 'Menunggu Pengiriman',
       bgColor: 'bg-blue-100',
@@ -25,6 +31,12 @@ export default function OrderStatus({ status }: { status: string }) {
       label: 'Dalam Pengiriman',
       bgColor: 'bg-green-100',
       textColor: 'text-green-800',
+      icon: CheckIcon,
+    },
+    DELIVERED: {
+      label: 'Terkirim',
+      bgColor: 'bg-purple-100',
+      textColor: 'text-purple-800',
       icon: CheckIcon,
     },
   };

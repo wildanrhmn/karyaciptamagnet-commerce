@@ -1,6 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { prisma } from "@/lib/db/prisma";
-import { formatCurrency } from "../components/utils";
 
 export async function fetchCardData() {
   noStore();
@@ -24,12 +23,8 @@ export async function fetchCardData() {
       (order) => order.status === "AWAITING_PAYMENT"
     );
 
-    const totalAwaitingPrice = formatCurrency(
-      awaitingPriceOrders?._sum.totalPrice ?? 0
-    );
-    const totalAwaitingPayment = formatCurrency(
-      awaitingPaymentOrders?._sum.totalPrice ?? 0
-    );
+    const totalAwaitingPrice = awaitingPriceOrders?._sum.totalPrice ?? 0;
+    const totalAwaitingPayment = awaitingPaymentOrders?._sum.totalPrice ?? 0;
 
     return {
       numberOfCustomers,
@@ -137,7 +132,7 @@ export async function fetchLatestOrders() {
         name: order.user.name || "",
         email: order.user.email || "",
         image_url: imageUrl,
-        amount: order.totalPrice ? formatCurrency(order.totalPrice) : "",
+        amount: order.totalPrice || null,
       };
     });
     return latestOrders;
@@ -200,7 +195,7 @@ export async function fetchFilteredSubmissions(query: string, currentPage: numbe
       }
       return {
         id: order.orderId,
-        amount: order.totalPrice ? formatCurrency(order.totalPrice) : "",
+        amount: order.totalPrice || null,
         date: order.createdAt,
         status: order.status,
         shippingStatus: order.shippingStatus,
@@ -222,12 +217,16 @@ export async function fetchSubmissionsPages(query: string) {
     const isQueryANumber = !isNaN(Number(query));
     const count = await prisma.order.count({
       where: {
-        OR: [
-          { user: { name: { contains: query, mode: "insensitive" } } },
-          { user: { email: { contains: query, mode: "insensitive" } } },
-          { status: { contains: query, mode: "insensitive" } },
-          { shippingStatus: { contains: query, mode: "insensitive" } },
-          ...(isQueryANumber ? [{ totalPrice: { equals: Number(query) } }] : []),
+        AND: [
+          { status: "AWAITING_PRICE" },
+          {
+            OR: [
+              { user: { name: { contains: query, mode: "insensitive" } } },
+              { user: { email: { contains: query, mode: "insensitive" } } },
+              { shippingStatus: { contains: query, mode: "insensitive" } },
+              isQueryANumber ? { totalPrice: { equals: Number(query) } } : {},
+            ],
+          },
         ],
       },
     });
@@ -238,6 +237,102 @@ export async function fetchSubmissionsPages(query: string) {
     throw new Error("Failed to fetch total number of orders.");
   }
 }
+
+export async function fetchFilteredOrders(query: string, currentPage: number) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const isQueryANumber = !isNaN(Number(query));
+  try {
+    const orders = await prisma.order.findMany({
+      select: {
+        orderId: true,
+        totalPrice: true,
+        createdAt: true,
+        status: true,
+        shippingStatus: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+      where: {
+        AND: [
+          { status: { not: "AWAITING_PRICE" } },
+          {
+            OR: [
+              { user: { name: { contains: query, mode: "insensitive" } } },
+              { user: { email: { contains: query, mode: "insensitive" } } },
+              { shippingStatus: { contains: query, mode: "insensitive" } },
+              isQueryANumber ? { totalPrice: { equals: Number(query) } } : {},
+            ],
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: ITEMS_PER_PAGE,
+      skip: offset,
+    });
+
+    const processedOrders = orders.map((order) => {
+      let imageUrl = "";
+      if (order.user.image) {
+        try {
+          const imageObject = JSON.parse(order.user.image);
+          imageUrl = imageObject.url || "";
+        } catch (error) {
+          console.error("Error parsing image JSON:", error);
+        }
+      }
+      return {
+        id: order.orderId,
+        amount: order.totalPrice || null,
+        date: order.createdAt,
+        status: order.status,
+        shippingStatus: order.shippingStatus,
+        name: order.user.name || "",
+        email: order.user.email || "",
+        image_url: imageUrl,
+      };
+    });
+    return processedOrders;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch orders.");
+  }
+}
+
+export async function fetchOrderPages(query: string) {
+  noStore();
+  try {
+    const isQueryANumber = !isNaN(Number(query));
+    const count = await prisma.order.count({
+      where: {
+        AND: [
+          { status: { not: "AWAITING_PRICE" } },
+          {
+            OR: [
+              { user: { name: { contains: query, mode: "insensitive" } } },
+              { user: { email: { contains: query, mode: "insensitive" } } },
+              { shippingStatus: { contains: query, mode: "insensitive" } },
+              isQueryANumber ? { totalPrice: { equals: Number(query) } } : {},
+            ],
+          },
+        ],
+      },
+    });
+    const totalPages = Math.ceil(Number(count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of orders.");
+  }
+}
+
 
 export async function fetchOrderById(id: string) {
   noStore();
@@ -276,4 +371,3 @@ export async function fetchOrderById(id: string) {
     throw new Error('Failed to fetch order.');
   }
 }
-

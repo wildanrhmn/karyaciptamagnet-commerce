@@ -6,7 +6,9 @@ import {
   NewspaperIcon,
   CogIcon,
   TruckIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  ShoppingBagIcon,
+  ArchiveBoxIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -17,8 +19,10 @@ const links = [
   { name: 'E-Commerce', href: '/', icon: ShoppingCartIcon },
   { name: 'Overview', href: '/dashboard/overview', icon: ArrowTopRightOnSquareIcon },
   { name: 'Submissions', href: '/dashboard/submissions', icon: NewspaperIcon },
+  { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBagIcon },
   { name: 'Production', href: '/dashboard/production', icon: CogIcon },
   { name: 'Shippings', href: '/dashboard/shippings', icon: TruckIcon },
+  { name: 'Inventory', href: '/dashboard/inventory', icon: ArchiveBoxIcon },
   { name: 'Reports', href: '/dashboard/reports', icon: ChartBarIcon },
 ];
 

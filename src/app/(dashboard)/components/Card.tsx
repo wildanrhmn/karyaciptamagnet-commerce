@@ -65,7 +65,7 @@ import { fetchCardData } from '../data/data';
           className={`${lusitana.className}
             truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
         >
-          {value}
+          {(type === 'pending'  || type === 'collected') ? `Rp. ${value.toLocaleString()}` : value}
         </p>
       </div>
     );

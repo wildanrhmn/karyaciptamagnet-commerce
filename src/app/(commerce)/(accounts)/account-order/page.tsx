@@ -108,7 +108,7 @@ const AccountOrder = () => {
                   <span className="text-sm text-slate-500 dark:text-slate-400">
                     Total Harga
                   </span>
-                  <p className="text-base font-medium">Rp. {finalPrice}</p>
+                  <p className="text-base font-medium">Rp. {finalPrice.toLocaleString()}</p>
                 </div>
               )}
               {!finalPrice && (

@@ -1,17 +1,19 @@
 import { UpdateOrder, DeleteOrder } from './Buttons';
 import OrderStatus from './OrderStatus';
 import { formatDateToLocal, formatCurrency } from './utils';
-import { fetchFilteredSubmissions } from '../data/data';
+import { fetchFilteredOrders } from '../data/data';
 import Avatar from "@/shared/Avatar/Avatar";
 
-export default async function SubmissionsTable({
+export default async function OrdersTable({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) {
-  const orders = await fetchFilteredSubmissions(query, currentPage);
+  const orders = await fetchFilteredOrders(query, currentPage);
+
+  console.info(orders)
 
   return (
     <div className="mt-6 flow-root">
@@ -36,7 +38,7 @@ export default async function SubmissionsTable({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {order.amount ? formatCurrency(order.amount) : 'To Be Determined'}
+                      {order.amount ? `Rp. ${order.amount.toLocaleString()}` : '-'}
                     </p>
                     <p>{formatDateToLocal(order.date)}</p>
                   </div>
@@ -87,7 +89,7 @@ export default async function SubmissionsTable({
                     {order.email}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {order.amount ? formatCurrency(order.amount) : 'To Be Determined'}
+                    {order.amount ? `Rp. ${order.amount.toLocaleString()}` : '-'}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocal(order.date)}

@@ -43,7 +43,7 @@ export default async function LatestOrders() {
                 <p
                   className={`${lusitana.className} truncate text-sm font-medium md:text-base`}
                 >
-                  {order.amount ? formatCurrency(order.amount) : 'To Be Determined'}
+                  {order.amount ? `Rp. ${order.amount.toLocaleString()}` : '-'}
                 </p>
               </div>
             );

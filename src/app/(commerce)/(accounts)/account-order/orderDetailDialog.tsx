@@ -84,7 +84,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {item.quantity} Qty x{" "}
                   <span className="text-green-600">
-                    Rp. {item.finalPrice ? item.finalPrice : item.product.priceRange}
+                    Rp. {item.finalPrice ? (item.finalPrice / item.quantity).toLocaleString() : item.product.priceRange}
                   </span>
                 </p>
               </div>
