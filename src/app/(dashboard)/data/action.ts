@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 type UpdateOrderState = {
@@ -43,7 +42,7 @@ export async function updateOrder(
     .array(
       z.object({
         cartItemId: z.string(),
-        finalPrice: z.number().int().positive(),
+        finalPrice: z.number().positive(),
       })
     )
     .safeParse(cartItems);
@@ -57,9 +56,20 @@ export async function updateOrder(
 
   try {
     for (const item of validatedFields.data) {
+      const cartItem = await prisma.cartItem.findUnique({
+        where: { cartItemId: item.cartItemId },
+        select: { quantity: true },
+      });
+
+      if (!cartItem) {
+        throw new Error(`Cart item with id ${item.cartItemId} not found`);
+      }
+
+      const finalPricePerItem = item.finalPrice / cartItem.quantity;
+
       await prisma.cartItem.update({
         where: { cartItemId: item.cartItemId },
-        data: { finalPrice: item.finalPrice },
+        data: { finalPrice: finalPricePerItem },
       });
     }
 
@@ -70,13 +80,13 @@ export async function updateOrder(
 
     if (order) {
       const updatedTotalPrice = order.cart.items.reduce(
-        (sum, item) => sum + (item.finalPrice || 0),
+        (sum, item) => sum + (item.finalPrice || 0) * item.quantity,
         0
       );
 
       await prisma.order.update({
         where: { orderId },
-        data: { totalPrice: updatedTotalPrice },
+        data: { totalPrice: updatedTotalPrice, status: 'AWAITING_PAYMENT' },
       });
     }
 

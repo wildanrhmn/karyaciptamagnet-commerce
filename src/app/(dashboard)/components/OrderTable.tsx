@@ -13,8 +13,6 @@ export default async function OrdersTable({
 }) {
   const orders = await fetchFilteredOrders(query, currentPage);
 
-  console.info(orders)
-
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">

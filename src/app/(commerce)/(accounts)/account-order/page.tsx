@@ -39,6 +39,8 @@ const AccountOrder = () => {
         return "Menunggu Harga";
       case "AWAITING_PAYMENT":
         return "Menunggu Pembayaran";
+      case "PAID":
+        return "Dibayar";
       case "AWAITING_SHIPMENT":
         return "Menunggu Pengiriman";
       case "ON_DELIVERY":
@@ -108,7 +110,7 @@ const AccountOrder = () => {
                   <span className="text-sm text-slate-500 dark:text-slate-400">
                     Total Harga
                   </span>
-                  <p className="text-base font-medium">Rp. {finalPrice.toLocaleString()}</p>
+                  <p className="text-base font-medium">Rp. {(finalPrice * quantity).toLocaleString()}</p>
                 </div>
               )}
               {!finalPrice && (
@@ -134,7 +136,6 @@ const AccountOrder = () => {
   };
 
   const renderOrder = (order: any) => {
-    console.info(order)
     return (
       <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden z-0 mt-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 sm:p-8 bg-slate-50 dark:bg-slate-500/5">

@@ -1,4 +1,4 @@
-import { CheckIcon, ClockIcon, CogIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ClockIcon, CogIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 export default function OrderStatus({ status }: { status: string }) {
@@ -14,6 +14,12 @@ export default function OrderStatus({ status }: { status: string }) {
       bgColor: 'bg-orange-100',
       textColor: 'text-orange-800',
       icon: ClockIcon,
+    },
+    PAID: {
+      label: 'Sudah Dibayar',
+      bgColor: 'bg-green-100',
+      textColor: 'text-green-800',
+      icon: CreditCardIcon,
     },
     PRODUCTION_IN_PROGRESS: {
       label: 'Produksi Berlangsung',

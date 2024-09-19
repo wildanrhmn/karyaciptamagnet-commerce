@@ -45,12 +45,20 @@ export async function POST(req: NextRequest) {
         }
 
         await updateOrderStatus(orderId, newStatus);
+        await updatePayment(orderId, newStatus, body.transaction_id);
 
         return NextResponse.json({ status: 'OK' });
     } catch (error) {
         console.error("Error processing webhook:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
+}
+
+async function updatePayment(orderId: string, status: string, transactionId: string) {
+    await prisma.payment.update({
+        where: { orderId },
+        data: { status, transactionId }
+    });
 }
 
 async function updateOrderStatus(orderId: string, status: string) {

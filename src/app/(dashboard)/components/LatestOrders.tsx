@@ -3,7 +3,6 @@ import clsx from "clsx";
 import Avatar from "@/shared/Avatar/Avatar";
 import { lusitana } from "./Fonts";
 import { fetchLatestOrders } from "../data/data";
-import { formatCurrency } from "./utils";
 
 export default async function LatestOrders() {
   const latestOrders: any[] = await fetchLatestOrders();

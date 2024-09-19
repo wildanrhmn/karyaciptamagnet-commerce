@@ -104,6 +104,8 @@ export async function fetchLatestOrders() {
         orderId: true,
         totalPrice: true,
         createdAt: true,
+        status: true,
+        shippingStatus: true,
         user: {
           select: {
             name: true,
@@ -131,8 +133,10 @@ export async function fetchLatestOrders() {
         id: order.orderId,
         name: order.user.name || "",
         email: order.user.email || "",
-        image_url: imageUrl,
+        image_url: imageUrl ? `/${imageUrl}` : "",
         amount: order.totalPrice || null,
+        status: order.status,
+        shippingStatus: order.shippingStatus,
       };
     });
     return latestOrders;
