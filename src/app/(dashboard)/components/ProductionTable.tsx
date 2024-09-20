@@ -1,44 +1,50 @@
-import { UpdateOrder, DeleteOrder } from './Buttons';
+import { SetOrderToProduction, SetOrderToProductionCompleted } from './Buttons';
 import OrderStatus from './OrderStatus';
-import { formatDateToLocal, formatCurrency } from './utils';
-import { fetchFilteredOrders } from '../data/data';
+import { fetchFilteredProduction } from '../data/data';
 import Avatar from "@/shared/Avatar/Avatar";
 
-export default async function OrdersTable({
+export default async function ProductionTable({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) {
-  const orders = await fetchFilteredOrders(query, currentPage);
+  const orders = await fetchFilteredProduction(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <div className="md:hidden">
-            {orders?.map((order: any) => (
+            {orders?.map((order, index) => (
               <div
-                key={order.id}
+                key={index}
                 className="mb-2 w-full rounded-md bg-white p-4"
               >
                 <div className="flex items-center justify-between border-b pb-4">
                   <div>
                     <div className="mb-2 flex items-center">
-                      <Avatar imgUrl={order.image_url} sizeClass="w-10 h-10" userName={order.name} />
-                      <p>{order.name}</p>
+                      <Avatar imgUrl="" sizeClass="w-10 h-10" userName={order.customerName} />
+                      <p>{order.customerName}</p>
                     </div>
-                    <p className="text-sm text-gray-500">{order.product_name}</p>
+                    <p className="text-sm text-gray-500">{order.productName}</p>
                   </div>
                   <OrderStatus status={order.status} />
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {order.amount ? `Rp. ${order.amount.toLocaleString()}` : '-'}
+                      {order.quantity} Pcs
                     </p>
-                    <p>{formatDateToLocal(order.date)}</p>
+                    <p>{order.customization}</p>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    {order.status === 'PRODUCTION_IN_PROGRESS' ? (
+                      <SetOrderToProductionCompleted id={order.id} />
+                    ) : (
+                      <SetOrderToProduction id={order.id} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -54,45 +60,49 @@ export default async function OrdersTable({
                   Product
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  Quantity
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Quantities
+                  Customization
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Status
                 </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white">
-              {orders?.map((order: any) => (
+              {orders?.map((order, index) => (
                 <tr
-                  key={order.id}
+                  key={index}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <Avatar imgUrl={order.image_url} sizeClass="w-8 h-8" userName={order.name} />
-                      <p>{order.name}</p>
+                      <Avatar imgUrl="" sizeClass="w-8 h-8" userName={order.customerName} />
+                      <p>{order.customerName}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {order.product_name}
+                    {order.productName}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {order.amount ? `Rp. ${order.amount.toLocaleString()}` : '-'}
+                    {order.quantity} Pcs
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {formatDateToLocal(order.date)}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {order.quantities} Pcs
+                    {order.customization}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <OrderStatus status={order.status} />
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {order.status === 'PRODUCTION_IN_PROGRESS' ? (
+                      <SetOrderToProductionCompleted id={order.id} />
+                    ) : (
+                      <SetOrderToProduction id={order.id} />
+                    )}
                   </td>
                 </tr>
               ))}

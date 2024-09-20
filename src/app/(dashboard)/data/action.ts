@@ -69,7 +69,9 @@ export async function updateOrder(
 
       await prisma.cartItem.update({
         where: { cartItemId: item.cartItemId },
-        data: { finalPrice: finalPricePerItem },
+        data: { 
+          finalPrice: finalPricePerItem,
+        },
       });
     }
 
@@ -86,7 +88,11 @@ export async function updateOrder(
 
       await prisma.order.update({
         where: { orderId },
-        data: { totalPrice: updatedTotalPrice, status: 'AWAITING_PAYMENT' },
+        data: { 
+          totalPrice: updatedTotalPrice, 
+          status: 'AWAITING_PAYMENT',
+          updatedAt: new Date(),
+        },
       });
     }
 
@@ -100,3 +106,47 @@ export async function updateOrder(
     };
   }
 }
+
+export async function setOrderStatusToProduction(orderId: string) {
+  try {
+    await prisma.order.update({
+      where: { orderId },
+      data: { 
+        status: 'PRODUCTION_IN_PROGRESS',
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath("/dashboard/production");
+    return { message: "Order status updated to production successfully." };
+  } catch (error) {
+    return {
+      message:
+        "Database Error: " +
+        (error instanceof Error ? error.message : String(error)),
+    };
+  }
+}
+
+export async function setOrderStatusToProductionCompleted(orderId: string) {
+  try {
+    await prisma.order.update({
+      where: { orderId },
+      data: { 
+        status: 'ON_DELIVERY',
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath("/dashboard/production");
+    return { message: "Order status updated to production completed successfully." };
+  } catch (error) {
+    return {
+      message:
+        "Database Error: " +
+        (error instanceof Error ? error.message : String(error)),
+    };
+  }
+}
+
+

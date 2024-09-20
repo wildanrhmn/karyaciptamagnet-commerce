@@ -166,13 +166,23 @@ export async function UpdatePassword(formData: FormData) {
 export async function AddToCart(productId: string, userId: string, quantity: number = 1, customization: string = "") {
   try {
     let cart = await prisma.cart.findFirst({
-      where: { userId },
+      where: { userId, status: "ORDER_DRAFT" },
     });
 
     if (!cart) {
-      cart = await prisma.cart.create({
-        data: { userId },
+      const existingOrderCreatedCart = await prisma.cart.findFirst({
+        where: { userId, status: "ORDER_CREATED" },
       });
+
+      if (existingOrderCreatedCart) {
+        cart = await prisma.cart.create({
+          data: { userId, status: "ORDER_DRAFT" },
+        });
+      } else {
+        cart = await prisma.cart.create({
+          data: { userId, status: "ORDER_DRAFT" },
+        });
+      }
     }
 
     const existingCartItem = await prisma.cartItem.findFirst({

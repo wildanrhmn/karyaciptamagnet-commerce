@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { prisma } from "@/lib/db/prisma";
 import crypto from 'crypto';
+import { revalidatePath } from "next/cache";
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +47,8 @@ export async function POST(req: NextRequest) {
 
         await updateOrderStatus(orderId, newStatus);
         await updatePayment(orderId, newStatus, body.transaction_id);
+
+        revalidatePath('/account-order');
 
         return NextResponse.json({ status: 'OK' });
     } catch (error) {

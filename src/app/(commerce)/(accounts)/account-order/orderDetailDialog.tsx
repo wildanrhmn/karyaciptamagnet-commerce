@@ -55,6 +55,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
         onSuccess: function (result: any) {
           console.log("Payment success:", result);
           onClose();
+          window.location.reload();
         },
         onPending: function (result: any) {
           console.log("Payment pending:", result);
@@ -218,11 +219,8 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                 Menunggu Konfirmasi Harga
               </h3>
               <div className="bg-gray-100 dark:bg-slate-700 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
-                <p className="mb-2 text-sm sm:text-[14px]">
+                <p className="mb-2 text-sm sm:text-[14px] leading-8">
                   Pesanan Anda sedang dalam proses konfirmasi harga. Kami akan segera menghubungi Anda untuk memberikan informasi harga final.
-                </p>
-                <p className="text-sm sm:text-[14px]">
-                  <span className="font-medium">Estimasi waktu:</span> 1-2 hari kerja
                 </p>
               </div>
             </>
@@ -236,9 +234,6 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
               <div className="bg-gray-100 dark:bg-slate-700 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
                 <p className="mb-2 text-sm sm:text-[14px]">
                   Silakan melakukan pembayaran sesuai dengan total yang tertera. Pesanan Anda akan diproses setelah pembayaran diterima.
-                </p>
-                <p className="text-sm sm:text-[14px]">
-                  <span className="font-medium">Batas waktu pembayaran:</span> 24 jam
                 </p>
               </div>
             </>
@@ -266,9 +261,6 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                 <p className="mb-2 text-sm sm:text-[14px]">
                   Pesanan Anda sedang dalam proses produksi. Kami akan memberitahu Anda ketika pesanan siap untuk dikirim.
                 </p>
-                <p className="text-sm sm:text-[14px]">
-                  <span className="font-medium">Estimasi waktu produksi:</span> 3-5 hari kerja
-                </p>
               </div>
             </>
           )}
@@ -287,9 +279,6 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                   {orderDetails.shippingAddress
                     ? orderDetails.shippingAddress
                     : "Tidak ada alamat pengiriman"}
-                </p>
-                <p className="text-sm sm:text-[14px]">
-                  <span className="font-medium">Estimasi waktu tiba:</span> 2-3 hari kerja
                 </p>
               </div>
             </>
