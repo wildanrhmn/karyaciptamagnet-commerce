@@ -65,7 +65,7 @@ export default async function ProductionTable({
                       Total Price
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Estimated Production In
+                      Estimated Time
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Status

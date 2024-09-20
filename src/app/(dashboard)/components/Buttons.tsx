@@ -1,6 +1,6 @@
-import { PencilIcon, PlusIcon, TrashIcon, PlayIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteOrder, setOrderStatusToProduction, setOrderStatusToProductionCompleted } from '../data/action';
+import { deleteOrder } from '../data/action';
 
 export function CreateOrder() {
   return (
@@ -36,29 +36,5 @@ export function DeleteOrder({ id }: { id: string }) {
         </button>
       </form>
     </>
-  );
-}
-
-export function SetOrderToProduction({ id }: { id: string }) {
-  const setOrderToProductionWithId = setOrderStatusToProduction.bind(null, id);
-  return (
-    <form action={setOrderToProductionWithId}>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
-        <span className="sr-only">Set to Production</span>
-        <PlayIcon className="w-5" />
-      </button>
-    </form>
-  );
-}
-
-export function SetOrderToProductionCompleted({ id }: { id: string }) {
-  const setOrderToProductionCompletedWithId = setOrderStatusToProductionCompleted.bind(null, id);
-  return (
-    <form action={setOrderToProductionCompletedWithId}>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
-        <span className="sr-only">Set to Production Completed</span>
-        <CheckCircleIcon className="w-5" />
-      </button>
-    </form>
   );
 }

@@ -92,7 +92,7 @@ export async function updateOrder(
           totalPrice: updatedTotalPrice, 
           status: 'AWAITING_PAYMENT',
           updatedAt: new Date(),
-          estimated: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+          estimated: new Date(Date.now() + 24 * 60 * 60 * 1000),
         },
       });
     }
@@ -140,7 +140,7 @@ export async function setOrderStatusToProductionCompleted(orderId: string) {
       data: { 
         status: 'ON_DELIVERY',
         updatedAt: new Date(),
-        estimated: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+        estimated: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
 
@@ -163,14 +163,37 @@ export async function setOrderStatusToOnDelivery(orderId: string, estimatedTime:
     await prisma.order.update({
       where: { orderId },
       data: { 
-        status: 'PRODUCTION_IN_PROGRESS',
+        shippingStatus: 'ON_DELIVERY',
+        status: 'ON_DELIVERY',
         updatedAt: new Date(),
         estimated: estimatedDate,
       },
     });
 
-    revalidatePath("/dashboard/production");
-    return { message: "Order status updated to production successfully." };
+    revalidatePath("/dashboard/shipping");
+    return { message: "Order status updated to on delivery successfully." };
+  } catch (error) {
+    return {
+      message:
+        "Database Error: " +
+        (error instanceof Error ? error.message : String(error)),
+    };
+  }
+}
+
+export async function setOrderStatusToDelivered(orderId: string) {
+  try {
+    await prisma.order.update({
+      where: { orderId },
+      data: { 
+        status: 'DELIVERED',
+        shippingStatus: 'DELIVERED',
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath("/dashboard/shipping");
+    return { message: "Order status updated to delivered successfully." };
   } catch (error) {
     return {
       message:

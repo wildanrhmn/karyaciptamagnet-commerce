@@ -1,4 +1,4 @@
-u5"use client";
+"use client";
 
 import { useState } from "react";
 import { PlayIcon, CheckIcon, EyeIcon } from "@heroicons/react/24/outline";

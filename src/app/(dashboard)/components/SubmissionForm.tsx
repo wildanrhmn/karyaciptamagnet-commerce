@@ -4,8 +4,9 @@ import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from './Button';
 import { updateOrder } from '../data/action';
-import { useFormState } from 'react-dom';
 import Image from 'next/image';
+import { toast } from "react-hot-toast";
+import { useRouter } from 'next/navigation';
 
 type UpdateOrderState = {
   errors?: {
@@ -16,10 +17,20 @@ type UpdateOrderState = {
 
 export default function SubmissionForm({ order }: { order: any }) {
   const initialState: UpdateOrderState = { message: null, errors: {} };
-  const [state, dispatch] = useFormState(updateOrder, initialState);
+  const router = useRouter();
+
+  const handleSubmit = async (formData: FormData) => {
+    const result = await updateOrder(initialState, formData);
+    if (result.message === "Order updated successfully.") {
+      toast.success("Order updated successfully");
+      router.push('/dashboard/submissions');
+    } else {
+      toast.error(result.message || "An error occurred");
+    }
+  };
   
   return (
-    <form action={dispatch} className="space-y-6">
+    <form action={handleSubmit} className="space-y-6">
       <input type="hidden" name="orderId" value={order.orderId} />
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         {order.cart.items.map((item: any) => (
@@ -65,9 +76,6 @@ export default function SubmissionForm({ order }: { order: any }) {
             </div>
           </div>
         ))}
-      </div>
-      <div id="validation-error" aria-live="polite" aria-atomic="true">
-        {state.message && <p className="text-sm text-red-600">{state.message}</p>}
       </div>
       <div className="flex justify-end gap-4">
         <Link

@@ -1,7 +1,7 @@
 import OrderStatus from './OrderStatus';
 import { fetchFilteredShipping } from '../data/data';
 import Avatar from "@/shared/Avatar/Avatar";
-import { SetOrderToProduction, SetOrderToProductionCompleted, ViewOrderDetail } from './ProductionButton';
+import { SetOrderToOnDelivery, SetOrderToDelivered, ViewShippingDetail } from './ShippingButton';
 
 export default async function ShippingTable({
   query,
@@ -11,7 +11,6 @@ export default async function ShippingTable({
   currentPage: number;
 }) {
   const orders = await fetchFilteredShipping(query, currentPage);
-    console.info(orders)
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -43,9 +42,9 @@ export default async function ShippingTable({
                       </div>
                       <div className="flex justify-end gap-2">
                         {order.shippingStatus === 'ON_DELIVERY' ? (
-                          <SetOrderToProductionCompleted id={order.id} />
+                          <SetOrderToDelivered id={order.id} />
                         ) : (
-                          <SetOrderToProduction order={order} />
+                          <SetOrderToOnDelivery order={order} />
                         )}
                       </div>
                     </div>
@@ -102,11 +101,11 @@ export default async function ShippingTable({
                       <td className="whitespace-nowrap px-3 py-3 flex gap-2">
                         {order.shippingStatus === 'ON_DELIVERY' ? (
                           <>
-                            <SetOrderToProductionCompleted id={order.id} />
-                            <ViewOrderDetail order={order} />
+                            <SetOrderToDelivered id={order.id} />
+                            <ViewShippingDetail order={order} />
                           </>
                         ) : (
-                          <SetOrderToProduction order={order} />
+                          <SetOrderToOnDelivery order={order} />
                         )}
                       </td>
                     </tr>

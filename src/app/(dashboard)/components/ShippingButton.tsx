@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PlayIcon, CheckIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { TruckIcon, CheckIcon, EyeIcon } from "@heroicons/react/24/outline";
 import {
   Modal,
   ModalContent,
@@ -12,8 +12,8 @@ import {
 } from "@nextui-org/modal";
 import toast from "react-hot-toast";
 import {
-  setOrderStatusToProduction,
-  setOrderStatusToProductionCompleted,
+  setOrderStatusToOnDelivery,
+  setOrderStatusToDelivered,
 } from "../data/action";
 import OrderStatus from "./OrderStatus";
 
@@ -63,13 +63,13 @@ export function ViewShippingDetail({ order }: { order: any }) {
                       <p><span className="font-medium text-gray-600 dark:text-gray-300">Order ID:</span> {order.id}</p>
                       <p><span className="font-medium text-gray-600 dark:text-gray-300">Total Price:</span> Rp. {order.totalPrice?.toLocaleString()}</p>
                       <p><span className="font-medium text-gray-600 dark:text-gray-300">Status:</span> <OrderStatus status={order.status} /></p>
-                      <p><span className="font-medium text-gray-600 dark:text-gray-300">Estimated Production:</span> {order.estimated ? new Date(order.estimated).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</p>
+                      <p><span className="font-medium text-gray-600 dark:text-gray-300">Estimated Delivery:</span> {order.estimated ? new Date(order.estimated).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</p>
                       <p><span className="font-medium text-gray-600 dark:text-gray-300">Total Weight:</span> {order.totalWeight ? `${order.totalWeight} kg` : '-'}</p>
                     </div>
                   </section>
                   <section className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">Shipping Information</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-5">
                       <p><span className="font-medium text-gray-600 dark:text-gray-300">Shipping Address:</span> {order.shippingAddress}</p>
                       <p><span className="font-medium text-gray-600 dark:text-gray-300">Shipping Status:</span> <OrderStatus status={order.shippingStatus} /></p>
                     </div>
@@ -105,7 +105,7 @@ export function ViewShippingDetail({ order }: { order: any }) {
 }
 
 
-export function SetOrderToProduction({ order }: { order: any }) {
+export function SetOrderToOnDelivery({ order }: { order: any }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [estimatedTime, setEstimatedTime] = useState("");
 
@@ -117,7 +117,7 @@ export function SetOrderToProduction({ order }: { order: any }) {
       return;
     }
     try {
-      const result = await setOrderStatusToProduction(
+      const result = await setOrderStatusToOnDelivery(
         order.id,
         estimatedTimeNumber
       );
@@ -141,7 +141,7 @@ export function SetOrderToProduction({ order }: { order: any }) {
         onClick={onOpen}
         className="rounded-md border p-2 hover:bg-gray-100 transition-colors duration-200"
       >
-        <PlayIcon className="w-5 text-gray-600" />
+        <TruckIcon className="w-5 text-gray-600" />
       </button>
 
       <Modal
@@ -162,7 +162,7 @@ export function SetOrderToProduction({ order }: { order: any }) {
             <>
               <ModalHeader className="flex flex-col gap-1">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  Set Order to Production
+                  Set Order to On Delivery
                 </h2>
               </ModalHeader>
               <ModalBody>
@@ -212,13 +212,20 @@ export function SetOrderToProduction({ order }: { order: any }) {
                       ))}
                     </div>
                   </section>
+                  <section className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">Shipping Information</h3>
+                    <div className="flex flex-col gap-5">
+                      <p><span className="font-medium text-gray-600 dark:text-gray-300">Shipping Address:</span> {order.shippingAddress}</p>
+                      <p><span className="font-medium text-gray-600 dark:text-gray-300">Shipping Status:</span> <OrderStatus status={order.shippingStatus} /></p>
+                    </div>
+                  </section>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                       <label
                         htmlFor="estimatedTime"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                       >
-                        Estimated Time (in days)
+                        Estimated Delivery Time (in days)
                       </label>
                       <input
                         type="number"
@@ -243,7 +250,7 @@ export function SetOrderToProduction({ order }: { order: any }) {
                   onClick={handleSubmit}
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
                 >
-                  Set to Production
+                  Set to On Delivery
                 </button>
               </ModalFooter>
             </>
@@ -254,7 +261,7 @@ export function SetOrderToProduction({ order }: { order: any }) {
   );
 }
 
-export function SetOrderToProductionCompleted({ id }: { id: string }) {
+export function SetOrderToDelivered({ id }: { id: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -262,7 +269,7 @@ export function SetOrderToProductionCompleted({ id }: { id: string }) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const result = await setOrderStatusToProductionCompleted(id);
+      const result = await setOrderStatusToDelivered(id);
       if (result.message) {
         toast.success(result.message);
         onClose();
@@ -295,9 +302,9 @@ export function SetOrderToProductionCompleted({ id }: { id: string }) {
         }}
       >
         <ModalContent>
-          <ModalHeader>Complete Production</ModalHeader>
+          <ModalHeader>Mark as Delivered</ModalHeader>
           <ModalBody>
-            Are you sure you want to mark this order as production completed?
+            Are you sure you want to mark this order as delivered?
           </ModalBody>
           <ModalFooter>
             <button
