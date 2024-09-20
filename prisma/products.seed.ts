@@ -163,6 +163,53 @@ const productData = [
       },
     ],
   },
+  {
+    name: "Samarium Cobalt Rod Magnets",
+    slug: "samarium-cobalt-rod-magnets",
+    smallDescription:
+      "Samarium Cobalt rod magnets offer high magnetic strength and excellent temperature resistance, making them ideal for high-performance applications in extreme environments.",
+    description: `
+        <p>Samarium Cobalt rod magnets are premium rare earth magnets known for their exceptional magnetic properties and resistance to demagnetization, even at high temperatures. These magnets are composed of samarium and cobalt, resulting in a powerful magnetic material that maintains its strength in challenging conditions.</p>
+        <p>Key features:</p>
+        <ul>
+            <li>High magnetic strength and coercivity</li>
+            <li>Excellent temperature resistance (up to 350°C)</li>
+            <li>Superior corrosion resistance</li>
+            <li>Ideal for high-performance and precision applications</li>
+        </ul>
+        <p>Common applications include:</p>
+        <ul>
+            <li>Aerospace and military equipment</li>
+            <li>High-temperature industrial sensors</li>
+            <li>Precision motors and actuators</li>
+            <li>Medical devices and imaging equipment</li>
+            <li>Automotive sensors and controls</li>
+        </ul>
+        <p>Our Samarium Cobalt rod magnets are manufactured to meet the highest industry standards, ensuring consistent performance in demanding environments. Contact us for custom sizes or specific grade requirements to suit your unique application needs.</p>
+    `,
+    weight: 150,
+    priceRange: "Rp. 50.000 - Rp. 1.000.000",
+    stock: 500,
+    categoryName: "Rare Earth Magnets",
+    subCategoryName: "Samarium Cobalts Magnet",
+    ProductImages: [
+      {
+        imageUrl:
+          "https://res.cloudinary.com/dbllvvcv5/image/upload/v1726815994/karyaciptamagnet/products/g9cz1bfcby2pbjkbkshj.jpg",
+        publicUrl: "karyaciptamagnet/products/samarium-cobalt-rod",
+      },
+      {
+        imageUrl:
+          "https://res.cloudinary.com/dbllvvcv5/image/upload/v1722253009/karyaciptamagnet/products/jdrwk4bycjbexpiux0dc.png",
+        publicUrl: "karyaciptamagnet/products/samarium-cobalt-rod-2",
+      },
+      {
+        imageUrl:
+          "https://res.cloudinary.com/dbllvvcv5/image/upload/v1722253008/karyaciptamagnet/products/azzqf3iezd0ghlzctuzq.png",
+        publicUrl: "karyaciptamagnet/products/samarium-cobalt-rod-2",
+      },
+    ],
+  },
 ];
 
 async function seed() {

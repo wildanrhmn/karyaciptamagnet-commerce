@@ -1,58 +1,52 @@
-import { UpdateOrder, DeleteOrder } from "./Buttons";
-import OrderStatus from "./OrderStatus";
-import { formatDateToLocal, formatCurrency } from "./utils";
-import { fetchFilteredSubmissions } from "../data/data";
+import OrderStatus from './OrderStatus';
+import { fetchFilteredShipping } from '../data/data';
 import Avatar from "@/shared/Avatar/Avatar";
+import { SetOrderToProduction, SetOrderToProductionCompleted, ViewOrderDetail } from './ProductionButton';
 
-export default async function SubmissionsTable({
+export default async function ShippingTable({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) {
-  const submissions = await fetchFilteredSubmissions(query, currentPage);
-
+  const orders = await fetchFilteredShipping(query, currentPage);
+    console.info(orders)
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-          {submissions && submissions.length > 0 ? (
+          {orders && orders.length > 0 ? (
             <>
               <div className="md:hidden">
-                {submissions.map((submission: any) => (
+                {orders.map((order) => (
                   <div
-                    key={submission.id}
+                    key={order.id}
                     className="mb-2 w-full rounded-md bg-white p-4"
                   >
                     <div className="flex items-center justify-between border-b pb-4">
                       <div>
                         <div className="mb-2 flex items-center">
-                          <Avatar
-                            imgUrl={submission.image_url}
-                            sizeClass="w-10 h-10"
-                            userName={submission.name}
-                          />
-                          <p>{submission.name}</p>
+                          <Avatar imgUrl="" sizeClass="w-10 h-10" userName={order.customerName} />
+                          <p>{order.customerName}</p>
                         </div>
-                        <p className="text-sm text-gray-500">
-                          {submission.email}
-                        </p>
+                        <p className="text-sm text-gray-500">{order.products[0].productName}</p>
                       </div>
-                      <OrderStatus status={submission.status} />
+                      <OrderStatus status={order.shippingStatus} />
                     </div>
                     <div className="flex w-full items-center justify-between pt-4">
                       <div>
                         <p className="text-xl font-medium">
-                          {submission.amount
-                            ? `Rp. ${submission.amount.toLocaleString()}`
-                            : "-"}
+                          {order.products[0].quantity} Pcs
                         </p>
-                        <p>{formatDateToLocal(submission.date)}</p>
+                        <p>{order.products[0].customization}</p>
                       </div>
                       <div className="flex justify-end gap-2">
-                        <UpdateOrder id={submission.id} />
-                        <DeleteOrder id={submission.id} />
+                        {order.shippingStatus === 'ON_DELIVERY' ? (
+                          <SetOrderToProductionCompleted id={order.id} />
+                        ) : (
+                          <SetOrderToProduction order={order} />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -68,54 +62,52 @@ export default async function SubmissionsTable({
                       Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Amount
+                      Total Price
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Date
+                      Estimated Shipping
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Status
                     </th>
-                    <th scope="col" className="relative py-3 pl-6 pr-3">
-                      <span className="sr-only">Edit</span>
+                    <th scope="col" className="px-3 py-5 font-medium">
+                      Action
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white">
-                  {submissions.map((submission: any) => (
+                  {orders.map((order) => (
                     <tr
-                      key={submission.id}
+                      key={order.id}
                       className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                     >
                       <td className="whitespace-nowrap py-3 pl-6 pr-3">
                         <div className="flex items-center gap-3">
-                          <Avatar
-                            imgUrl={submission.image_url}
-                            sizeClass="w-8 h-8"
-                            userName={submission.name}
-                          />
-                          <p>{submission.name}</p>
+                          <Avatar imgUrl="" sizeClass="w-8 h-8" userName={order.customerName} />
+                          <p>{order.customerName}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-3">
-                        {submission.email}
+                      <td className="whitespace-nowrap px-3 py-3 space-y-5">
+                        {order.customerEmail}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-3 space-y-5">
+                        Rp. {order.totalPrice?.toLocaleString()}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-3 space-y-5">
+                        {order.estimated ? new Date(order.estimated).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '-'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-3">
-                        {submission.amount
-                          ? `Rp. ${submission.amount.toLocaleString()}`
-                          : "-"}
+                        <OrderStatus status={order.shippingStatus} />
                       </td>
-                      <td className="whitespace-nowrap px-3 py-3">
-                        {formatDateToLocal(submission.date)}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3">
-                        <OrderStatus status={submission.status} />
-                      </td>
-                      <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                        <div className="flex justify-end gap-3">
-                          <UpdateOrder id={submission.id} />
-                          <DeleteOrder id={submission.id} />
-                        </div>
+                      <td className="whitespace-nowrap px-3 py-3 flex gap-2">
+                        {order.shippingStatus === 'ON_DELIVERY' ? (
+                          <>
+                            <SetOrderToProductionCompleted id={order.id} />
+                            <ViewOrderDetail order={order} />
+                          </>
+                        ) : (
+                          <SetOrderToProduction order={order} />
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -140,10 +132,10 @@ export default async function SubmissionsTable({
                 />
               </svg>
               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No submissions
+                No shipping orders
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                No submissions found.
+                No shipping orders found.
               </p>
             </div>
           )}

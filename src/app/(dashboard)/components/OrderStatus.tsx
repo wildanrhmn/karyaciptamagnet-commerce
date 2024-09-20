@@ -27,6 +27,12 @@ export default function OrderStatus({ status }: { status: string }) {
       textColor: 'text-indigo-800',
       icon: CogIcon,
     },
+    PENDING: {
+      label: 'Menunggu Pengiriman',
+      bgColor: 'bg-blue-100',
+      textColor: 'text-blue-800',
+      icon: ClockIcon,
+    },  
     ON_DELIVERY: {
       label: 'Dalam Pengiriman',
       bgColor: 'bg-green-100',

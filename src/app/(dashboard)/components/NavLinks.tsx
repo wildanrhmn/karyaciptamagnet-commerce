@@ -18,8 +18,8 @@ import clsx from 'clsx';
 const links = [
   { name: 'E-Commerce', href: '/', icon: ShoppingCartIcon },
   { name: 'Overview', href: '/dashboard/overview', icon: ArrowTopRightOnSquareIcon },
-  { name: 'Submissions', href: '/dashboard/submissions', icon: NewspaperIcon },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBagIcon },
+  { name: 'Submissions', href: '/dashboard/submissions', icon: NewspaperIcon },
   { name: 'Production', href: '/dashboard/production', icon: CogIcon },
   { name: 'Shippings', href: '/dashboard/shippings', icon: TruckIcon },
   { name: 'Inventory', href: '/dashboard/inventory', icon: ArchiveBoxIcon },

@@ -271,6 +271,7 @@ export async function fetchFilteredOrders(query: string, currentPage: number) {
                   }
                 },
                 quantity: true,
+                finalPrice: true,
               }
             }
           }
@@ -306,8 +307,9 @@ export async function fetchFilteredOrders(query: string, currentPage: number) {
           console.error("Error parsing image JSON:", error);
         }
       }
-      const productName = order.cart.items.map(item => item.product.name).join(", ");
-      const quantities = order.cart.items.map(item => item.quantity).join(", ");
+      const productNames = order.cart.items.map(item => item.product.name);
+      const quantities = order.cart.items.map(item => item.quantity);
+      const itemPrices = order.cart.items.map(item => item.finalPrice || 0);
       return {
         id: order.orderId,
         amount: order.totalPrice || null,
@@ -317,8 +319,9 @@ export async function fetchFilteredOrders(query: string, currentPage: number) {
         name: order.user.name || "",
         email: order.user.email || "",
         image_url: imageUrl,
-        product_name: productName,
+        product_names: productNames,
         quantities: quantities,
+        item_prices: itemPrices,
       };
     });
     return processedOrders;
@@ -391,16 +394,20 @@ export async function fetchFilteredProduction(query: string, currentPage: number
       take: ITEMS_PER_PAGE,
     });
 
-    const processedOrders = orders.flatMap((order) => 
-      order.cart.items.map((item) => ({
-        id: order.orderId,
-        customerName: order.user.name || "",
+    const processedOrders = orders.map((order) => ({
+      id: order.orderId,
+      customerName: order.user.name || "",
+      customerEmail: order.user.email || "",
+      totalPrice: order.totalPrice || null,
+      estimated: order.estimated || null,
+      totalWeight: order.totalWeight || null,
+      products: order.cart.items.map((item) => ({
         productName: item.product.name,
         quantity: item.quantity,
         customization: item.customization,
-        status: order.status,
-      }))
-    );
+      })),
+      status: order.status,
+    }));
 
     return processedOrders;
   } catch (error) {
@@ -433,6 +440,92 @@ export async function fetchFilteredProductionPages(query: string) {
     throw new Error("Failed to fetch total number of production pages.");
   }
 }
+
+export async function fetchFilteredShipping(query: string, currentPage: number) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        AND: [
+          { status: { in: ["ON_DELIVERY", "DELIVERED"] } },
+          {
+            OR: [
+              { user: { name: { contains: query, mode: "insensitive" } } },
+              { cart: { items: { some: { product: { name: { contains: query, mode: "insensitive" } } } } } },
+            ],
+          },
+        ],
+      },
+      include: {
+        user: true,
+        cart: {
+          include: {
+            items: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: offset,
+      take: ITEMS_PER_PAGE,
+    });
+
+    const processedOrders = orders.map((order) => ({
+      id: order.orderId,
+      customerName: order.user.name || "",
+      customerEmail: order.user.email || "",
+      totalPrice: order.totalPrice || null,
+      estimated: order.estimated || null,
+      totalWeight: order.totalWeight || null,
+      shippingAddress: order.shippingAddress || "",
+      shippingStatus: order.shippingStatus || "",
+      products: order.cart.items.map((item) => ({
+        productName: item.product.name,
+        quantity: item.quantity,
+        customization: item.customization,
+      })),
+      status: order.status,
+    }));
+
+    return processedOrders;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch shipping orders.");
+  }
+}
+
+export async function fetchShippingPages(query: string) {
+  noStore();
+  try {
+    const count = await prisma.order.count({
+      where: {
+        status: { in: ["ON_DELIVERY", "DELIVERED"] },
+        AND: [
+          {
+            OR: [
+              { user: { name: { contains: query, mode: "insensitive" } } },
+              { cart: { items: { some: { product: { name: { contains: query, mode: "insensitive" } } } } } },
+            ],
+          },
+        ],
+      },
+    });
+
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of shipping pages.");
+  }
+}
+
 
 export async function fetchOrderById(id: string) {
   noStore();

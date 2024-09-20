@@ -278,6 +278,9 @@ export async function createOrder(cartId: string) {
       throw new Error("Cart not found or doesn't belong to the user");
     }
 
+    const estimatedTime = new Date();
+    estimatedTime.setHours(estimatedTime.getHours() + 24);
+
     const order = await prisma.order.create({
       data: {
         userId,
@@ -287,6 +290,7 @@ export async function createOrder(cartId: string) {
         totalWeight: 0,
         shippingStatus: "PENDING",
         shippingAddress: "",
+        estimated: estimatedTime,
       },
     });
 

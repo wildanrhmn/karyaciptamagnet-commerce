@@ -8,7 +8,6 @@ import OrderDetailsDialog from "./orderDetailDialog";
 import axios from "axios";
 import { deleteOrder } from "@/lib/action";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 interface OrderDetails {
   invoiceNumber: string;
@@ -28,7 +27,6 @@ interface OrderDetails {
 }
 
 const AccountOrder = () => {
-  const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
@@ -41,10 +39,12 @@ const AccountOrder = () => {
         return "Menunggu Pembayaran";
       case "PAID":
         return "Dibayar";
-      case "AWAITING_SHIPMENT":
-        return "Menunggu Pengiriman";
+      case "PRODUCTION_IN_PROGRESS":
+        return "Dalam Proses Produksi";
       case "ON_DELIVERY":
         return "Dalam Pengiriman";
+      case "DELIVERED":
+        return "Diterima";
     }
   }
 
@@ -83,7 +83,7 @@ const AccountOrder = () => {
   const renderProductItem = (item: any, index: number) => {
     const { product, customization, quantity, finalPrice } = item;
     return (
-      <div key={index} className="flex py-4 sm:py-7 last:pb-0 first:pt-0">
+      <div key={index} className="flex py-4 sm:py-7 last:pb-0 first:pt-0 my-5">
         <div className="relative h-24 w-24 sm:w-28 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
           <Image
             fill
