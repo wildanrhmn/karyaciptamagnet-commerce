@@ -65,7 +65,7 @@ export async function updateOrder(
         throw new Error(`Cart item with id ${item.cartItemId} not found`);
       }
 
-      const finalPricePerItem = item.finalPrice / cartItem.quantity;
+      const finalPricePerItem = Math.floor(item.finalPrice / cartItem.quantity);
 
       await prisma.cartItem.update({
         where: { cartItemId: item.cartItemId },

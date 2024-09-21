@@ -7,7 +7,11 @@ export async function fetchCardData() {
     const [numberOfOrders, numberOfCustomers, ordersByStatus] =
       await Promise.all([
         prisma.order.count(),
-        prisma.user.count(),
+        prisma.user.count({
+          where: {
+            scope: 'member',
+          }
+        }),
         prisma.order.groupBy({
           by: ["status"],
           _sum: {

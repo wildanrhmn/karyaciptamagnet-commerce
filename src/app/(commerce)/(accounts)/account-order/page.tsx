@@ -42,15 +42,13 @@ const AccountOrder = () => {
         return "Dibayar";
       case "PRODUCTION_IN_PROGRESS":
         return "Dalam Proses Produksi";
+      case "AWAITING_DELIVERY":
+        return "Menunggu Pengiriman";
       case "ON_DELIVERY":
         return "Dalam Pengiriman";
       case "DELIVERED":
         return "Diterima";
     }
-  }
-
-  async function handleReceiveProduct(orderId: string) {
-
   }
 
   async function handleDeleteOrder(orderId: string, cartId: string) {

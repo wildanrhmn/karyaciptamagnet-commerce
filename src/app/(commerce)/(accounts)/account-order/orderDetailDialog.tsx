@@ -6,6 +6,7 @@ import ButtonSecondary from "@/shared/Button/ButtonSecondary";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import Script from "next/script";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@nextui-org/modal";
+import { useRouter } from "next/navigation";
 
 interface OrderDetailsDialogProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
   orderDetails,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   function formatStatus(status: string) {
     switch (status) {
@@ -350,7 +352,9 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
               orderDetails.status === "DELIVERED" ||
               orderDetails.status === "ON_DELIVERY" ||
               orderDetails.status === "PRODUCTION_IN_PROGRESS") && (
-              <ButtonPrimary>
+              <ButtonPrimary
+                onClick={() => router.push(`/invoice/${orderDetails.orderId}`)}
+              >
                 Lihat Invoice
               </ButtonPrimary>
             )}
