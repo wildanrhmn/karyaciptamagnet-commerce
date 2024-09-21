@@ -104,6 +104,8 @@ export default async function ShippingTable({
                             <SetOrderToDelivered id={order.id} />
                             <ViewShippingDetail order={order} />
                           </>
+                        ) : order.shippingStatus === 'DELIVERED' ? (
+                          <ViewShippingDetail order={order} />
                         ) : (
                           <SetOrderToOnDelivery order={order} />
                         )}

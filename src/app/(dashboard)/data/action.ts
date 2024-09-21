@@ -193,6 +193,7 @@ export async function setOrderStatusToDelivered(orderId: string) {
     });
 
     revalidatePath("/dashboard/shipping");
+    revalidatePath("/account-order");
     return { message: "Order status updated to delivered successfully." };
   } catch (error) {
     return {

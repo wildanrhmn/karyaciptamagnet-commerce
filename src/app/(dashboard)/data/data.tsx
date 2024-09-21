@@ -564,3 +564,50 @@ export async function fetchOrderById(id: string) {
     throw new Error('Failed to fetch order.');
   }
 }
+
+export async function fetchFilteredProducts(query: string, currentPage: number) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+      },
+      include: {
+        ProductImages: true,
+        productCategory: true,
+        productSubCategory: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: offset,
+      take: ITEMS_PER_PAGE,
+    });
+
+    return products;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch filtered products.');
+  }
+}
+
+export async function fetchProductsPages(query: string) {
+  noStore();
+  try {
+    const count = await prisma.product.count({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+      },
+    });
+
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of products pages.');
+  }
+}
+
+
+

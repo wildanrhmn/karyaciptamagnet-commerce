@@ -5,6 +5,7 @@ import Prices from "@/components/Prices";
 import ButtonSecondary from "@/shared/Button/ButtonSecondary";
 import Image, { StaticImageData } from "next/image";
 import OrderDetailsDialog from "./orderDetailDialog";
+import { SetOrderToDelivered } from "./Button";
 import axios from "axios";
 import { deleteOrder } from "@/lib/action";
 import toast from "react-hot-toast";
@@ -46,6 +47,10 @@ const AccountOrder = () => {
       case "DELIVERED":
         return "Diterima";
     }
+  }
+
+  async function handleReceiveProduct(orderId: string) {
+
   }
 
   async function handleDeleteOrder(orderId: string, cartId: string) {
@@ -155,14 +160,18 @@ const AccountOrder = () => {
               </span>
             </p>
           </div>
-          <div className="mt-3 sm:mt-0">
+          <div className="mt-3 sm:mt-0 space-x-2">
             <ButtonSecondary
               sizeClass="py-2.5 px-4 sm:px-6"
+              
               fontSize="text-sm font-medium"
               onClick={() => openDialog(order)}
-            >
+              >
               Detail Pesanan
             </ButtonSecondary>
+              {order.status === "ON_DELIVERY" && (
+                <SetOrderToDelivered id={order.orderId} />
+              )}
           </div>
         </div>
         <div className="border-t border-slate-200 dark:border-slate-700 p-2 sm:p-8 divide-y divide-y-slate-200 dark:divide-slate-700">
