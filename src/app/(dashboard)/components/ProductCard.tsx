@@ -19,9 +19,9 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const renderGroupButtons = () => {
     return (
-      <div className="absolute bottom-0 group-hover:bottom-4 inset-x-1 flex justify-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all bg-black bg-opacity-50">
         <ButtonPrimary
-          className="shadow-lg"
+          className="shadow-lg mr-2"
           fontSize="text-xs"
           sizeClass="py-2 px-4"
           onClick={() => setShowModalEdit(true)}
@@ -31,7 +31,7 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
         </ButtonPrimary>
 
         <ButtonSecondary
-          className="ms-1.5 bg-white hover:!bg-gray-100 hover:text-slate-900 transition-colors shadow-lg"
+          className="bg-white hover:!bg-gray-100 hover:text-slate-900 transition-colors shadow-lg"
           fontSize="text-xs"
           sizeClass="py-2 px-4"
         >
@@ -45,7 +45,7 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
   return (
     <>
       <div
-        className={`nc-ProductCard relative flex flex-col bg-[#F9FAFB] border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow ${className}`}
+        className={`nc-ProductCard relative flex flex-col dark:border-gray-700 rounded-lg shadow-md hover:shadow-md transition-shadow ${className}`}
       >
         <Link
           href={`/product/${product?.slug}`}
@@ -65,9 +65,12 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
           </Link>
           <ProductStatus stock={product.stock} />
           {renderGroupButtons()}
+          <div className="absolute bottom-2 right-2 bg-white bg-opacity-90 p-2 rounded-md shadow-md">
+            <Prices price={product?.priceRange} />
+          </div>
         </div>
 
-        <div className="space-y-4 px-4 pt-5 pb-4">
+        <div className="space-y-4 px-2.5 pt-5 pb-5">
           <div>
             <h2 className="nc-ProductCard__title text-base font-semibold transition-colors">
               {product?.name}
@@ -91,16 +94,12 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
               <span className="font-medium">Created:</span> {new Date(product?.createdAt).toLocaleDateString()}
             </p>
           </div>
-
-          <div className="flex justify-between items-end">
-            <Prices price={product?.priceRange} />
-          </div>
         </div>
+        <ModalEdit
+          show={showModalEdit}
+          onCloseModalEdit={() => setShowModalEdit(false)}
+        />
       </div>
-      <ModalEdit
-        show={showModalEdit}
-        onCloseModalEdit={() => setShowModalEdit(false)}
-      />
     </>
   );
 };

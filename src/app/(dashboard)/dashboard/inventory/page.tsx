@@ -4,7 +4,7 @@ import { lusitana } from '../../components/Fonts';
 import { fetchProductsPages } from '../../data/data';
 import { Suspense } from 'react';
 import InventoryProducts from '../../components/InventoryProducts';
- 
+import { AddProduct } from '../../components/InventoryButton';
 
 export default async function Page(
   { searchParams } : {
@@ -25,6 +25,7 @@ export default async function Page(
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search products..." />
+        <AddProduct />
       </div>
       <Suspense key={query + currentPage} fallback={
         <div className="container mx-auto px-4">
@@ -47,7 +48,7 @@ export default async function Page(
       }>
         <InventoryProducts query={query} currentPage={currentPage} />
       </Suspense>
-      <div className="mt-5 flex w-full justify-center">
+      <div className="mt-12 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>
     </div>

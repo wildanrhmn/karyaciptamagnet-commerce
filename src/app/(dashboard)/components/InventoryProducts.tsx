@@ -11,13 +11,11 @@ export default async function InventoryProducts({
 }) {
   const products = await fetchFilteredProducts(query, currentPage);
   return (
-    <div className="container mx-auto px-4 mt-10">
+    <div>
       {products.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {products.map((product: any) => (
-            <div key={product.productId} className="flex justify-center items-stretch">
-              <ProductCard product={product} className="w-full h-auto max-w-xs" />
-            </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10 mt-8 lg:mt-10">
+          {products.map((item, index) => (
+            <ProductCard product={item} key={index} />
           ))}
         </div>
       ) : (

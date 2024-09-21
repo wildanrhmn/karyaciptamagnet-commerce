@@ -613,5 +613,44 @@ export async function fetchProductsPages(query: string) {
   }
 }
 
+export async function fetchCategories() {
+  noStore();
+  try {
+    const categories = await prisma.productCategory.findMany({
+      include: {
+        productSubCategories: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    return categories;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch product categories.');
+  }
+}
+
+export async function fetchSubCategories() {
+  noStore();
+  try {
+    const subCategories = await prisma.productSubCategory.findMany({
+      include: {
+        productCategory: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    return subCategories;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch product subcategories.');
+  }
+}
+
+
 
 

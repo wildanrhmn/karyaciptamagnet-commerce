@@ -34,6 +34,16 @@ model Product {
   @@map("products")
 }
 
+model ProductImage {
+  productImageId String  @id @default(cuid())
+  productId      String
+  imageUrl       String
+  publicUrl      String
+  product        Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  @@map("productimages")
+}
+
 model ProductReview {
   productReviewId String   @id @default(cuid())
   productId       String
@@ -75,15 +85,6 @@ model ProductSubCategory {
   @@map("productsubcategories")
 }
 
-model ProductImage {
-  productImageId String  @id @default(cuid())
-  productId      String
-  imageUrl       String
-  publicUrl      String
-  product        Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
-
-  @@map("productimages")
-}
 
 model Cart {
   cartId    String     @id @default(cuid())

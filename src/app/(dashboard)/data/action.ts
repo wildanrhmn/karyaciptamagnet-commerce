@@ -2,7 +2,110 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
+import cloudinary from '@/lib/cloudinary';
+
+const ProductSchema = z.object({
+  name: z.string().min(1, "Product name is required"),
+  description: z.string().min(1, "Description is required"),
+  weight: z.coerce.number().positive("Weight must be a positive number"),
+  priceRange: z.string().min(1, "Price range is required"),
+  productCategoryId: z.string().min(1, "Product category is required"),
+  productSubCategoryId: z.string().min(1, "Product sub-category is required"),
+  stock: z.coerce.number().int().nonnegative("Stock must be a non-negative integer"),
+});
+
+type ProductState = {
+  errors?: {
+    name?: string[];
+    description?: string[];
+    weight?: string[];
+    priceRange?: string[];
+    productCategoryId?: string[];
+    productSubCategoryId?: string[];
+    stock?: string[];
+  };
+  message: string | null;
+};
+
+export async function createProduct(prevState: ProductState, formData: FormData): Promise<ProductState> {
+  const validatedFields = ProductSchema.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description"),
+    weight: formData.get("weight"),
+    priceRange: formData.get("priceRange"),
+    productCategoryId: formData.get("productCategoryId"),
+    productSubCategoryId: formData.get("productSubCategoryId"),
+    stock: formData.get("stock"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Product.",
+    };
+  }
+
+  const {
+    name,
+    description,
+    weight,
+    priceRange,
+    productCategoryId,
+    productSubCategoryId,
+    stock,
+  } = validatedFields.data;
+
+  const slug = name.toLowerCase().replace(/\s+/g, '-');
+  const smallDescription = description.length > 100 ? description.slice(0, 100) + '...' : description;
+
+  try {
+    const imageUrls = [];
+    for (let i = 0; i < 3; i++) {
+      const imageData = formData.get(`image${i}`);
+      if (imageData) {
+        const result = await cloudinary.uploader.upload(imageData as string, {
+          folder: 'product-images',
+        });
+        imageUrls.push({ imageUrl: result.secure_url, publicUrl: result.public_id });
+      }
+    }
+
+    await prisma.product.create({
+      data: {
+        name,
+        description,
+        weight,
+        priceRange,
+        productCategoryId,
+        productSubCategoryId,
+        stock,
+        slug,
+        smallDescription,
+        ProductImages: {
+          create: imageUrls,
+        },
+      },
+    });
+
+    revalidatePath("/dashboard/inventory");
+    return { message: "Product created successfully" };
+  } catch (error) {
+    console.error("Error creating product:", error);
+    return {
+      message: "Database Error: Failed to Create Product.",
+    };
+  }
+}
+
+export async function createProductAndRedirect(prevState: ProductState, formData: FormData) {
+  const result = await createProduct(prevState, formData);
+  if (!result.errors) {
+    redirect("/dashboard/inventory");
+  }
+  return result;
+}
 
 type UpdateOrderState = {
   errors?: {
@@ -69,7 +172,7 @@ export async function updateOrder(
 
       await prisma.cartItem.update({
         where: { cartItemId: item.cartItemId },
-        data: { 
+        data: {
           finalPrice: finalPricePerItem,
         },
       });
@@ -88,9 +191,9 @@ export async function updateOrder(
 
       await prisma.order.update({
         where: { orderId },
-        data: { 
-          totalPrice: updatedTotalPrice, 
-          status: 'AWAITING_PAYMENT',
+        data: {
+          totalPrice: updatedTotalPrice,
+          status: "AWAITING_PAYMENT",
           updatedAt: new Date(),
           estimated: new Date(Date.now() + 24 * 60 * 60 * 1000),
         },
@@ -108,15 +211,18 @@ export async function updateOrder(
   }
 }
 
-export async function setOrderStatusToProduction(orderId: string, estimatedTime: number) {
+export async function setOrderStatusToProduction(
+  orderId: string,
+  estimatedTime: number
+) {
   try {
     const estimatedDate = new Date();
     estimatedDate.setDate(estimatedDate.getDate() + estimatedTime);
 
     await prisma.order.update({
       where: { orderId },
-      data: { 
-        status: 'PRODUCTION_IN_PROGRESS',
+      data: {
+        status: "PRODUCTION_IN_PROGRESS",
         updatedAt: new Date(),
         estimated: estimatedDate,
       },
@@ -137,15 +243,17 @@ export async function setOrderStatusToProductionCompleted(orderId: string) {
   try {
     await prisma.order.update({
       where: { orderId },
-      data: { 
-        status: 'ON_DELIVERY',
+      data: {
+        status: "ON_DELIVERY",
         updatedAt: new Date(),
         estimated: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
 
     revalidatePath("/dashboard/production");
-    return { message: "Order status updated to production completed successfully." };
+    return {
+      message: "Order status updated to production completed successfully.",
+    };
   } catch (error) {
     return {
       message:
@@ -155,16 +263,19 @@ export async function setOrderStatusToProductionCompleted(orderId: string) {
   }
 }
 
-export async function setOrderStatusToOnDelivery(orderId: string, estimatedTime: number) {
+export async function setOrderStatusToOnDelivery(
+  orderId: string,
+  estimatedTime: number
+) {
   try {
     const estimatedDate = new Date();
     estimatedDate.setDate(estimatedDate.getDate() + estimatedTime);
 
     await prisma.order.update({
       where: { orderId },
-      data: { 
-        shippingStatus: 'ON_DELIVERY',
-        status: 'ON_DELIVERY',
+      data: {
+        shippingStatus: "ON_DELIVERY",
+        status: "ON_DELIVERY",
         updatedAt: new Date(),
         estimated: estimatedDate,
       },
@@ -185,9 +296,9 @@ export async function setOrderStatusToDelivered(orderId: string) {
   try {
     await prisma.order.update({
       where: { orderId },
-      data: { 
-        status: 'DELIVERED',
-        shippingStatus: 'DELIVERED',
+      data: {
+        status: "DELIVERED",
+        shippingStatus: "DELIVERED",
         updatedAt: new Date(),
       },
     });
@@ -203,5 +314,3 @@ export async function setOrderStatusToDelivered(orderId: string) {
     };
   }
 }
-
-
