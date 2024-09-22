@@ -24,7 +24,7 @@ const links = [
   { name: 'Production', href: '/dashboard/production', icon: CogIcon },
   { name: 'Shippings', href: '/dashboard/shippings', icon: TruckIcon },
   { name: 'Inventory', href: '/dashboard/inventory', icon: ArchiveBoxIcon },
-  { name: 'User Management', href: '/dashboard/user-management', icon: UserGroupIcon },
+  { name: 'User Management', href: '/dashboard/users', icon: UserGroupIcon },
   { name: 'Reports', href: '/dashboard/reports', icon: ChartBarIcon },
 ];
 

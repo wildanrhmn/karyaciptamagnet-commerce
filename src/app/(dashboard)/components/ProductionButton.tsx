@@ -233,7 +233,7 @@ export function SetOrderToProduction({ order }: { order: any }) {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+                  className="px-4 py-2 bg-[#0F172A] text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
                 >
                   Set to Production
                 </button>

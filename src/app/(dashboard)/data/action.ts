@@ -5,6 +5,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import cloudinary from '@/lib/cloudinary';
+import bcrypt from "bcrypt";
+import { Buffer } from 'buffer';
+import { UploadApiResponse } from 'cloudinary';
 
 const ProductSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -432,3 +435,242 @@ export async function setOrderStatusToDelivered(orderId: string) {
     };
   }
 }
+
+export type UserState = {
+  errors?: {
+    id?: string[];
+    username?: string[];
+    name?: string[];
+    email?: string[];
+    image?: string[];
+    password?: string[];
+    scope?: string[];
+  };
+  message?: string | null;
+}; 
+
+const UserFormSchema = z.object({
+  id: z.string({
+    invalid_type_error: "ID must be a string",
+    required_error: "ID is required",
+  }),
+  username: z.string({
+    invalid_type_error: "Username must be a string",
+    required_error: "Username is required",
+  }),
+  name: z.string({
+    invalid_type_error: "Name must be a string",
+    required_error: "Name is required",
+  }),
+  email: z.string({
+    invalid_type_error: "Email must be a string",
+    required_error: "Email is required",
+  }).email({ message: "Invalid email address" }),
+  image: z.instanceof(File, { message: "Image must be a file" }).refine(
+    (file) => ['image/png', 'image/jpeg'].includes(file.type),
+    { message: 'File must be either PNG or JPG' }
+  ).optional(),
+  password: z.string({
+    invalid_type_error: "Password must be a string",
+    required_error: "Password is required",
+  }),
+  scope: z.string({
+    invalid_type_error: "Scope must be a string",
+    required_error: "Scope is required",
+  }),
+});
+
+const CreateUserSchema = UserFormSchema.omit({ id: true }).extend({
+  image: z.any().optional().refine(
+    (file) => !file || (file instanceof Blob && ['image/png', 'image/jpeg'].includes(file.type)),
+    { message: 'File must be either PNG or JPG' }
+  ),
+});
+
+export async function createUser(prevState: UserState, formData: FormData) {
+  const validatedFields = CreateUserSchema.safeParse({
+    username: formData.get('username'),
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    scope: formData.get('scope'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create User.',
+    };
+  }
+
+  const { username, name, email, password, scope } = validatedFields.data;
+
+  try {
+    let imageData = null;
+    const imageFile = formData.get('image') as File | null;
+    if (imageFile) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'user-images' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as UploadApiResponse);
+          }
+        ).end(buffer);
+      });
+
+      imageData = JSON.stringify({
+        imageUrl: result.secure_url,
+        publicUrl: result.public_id
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.create({
+      data: {
+        username,
+        name,
+        email,
+        emailVerified: new Date(),
+        image: imageData,
+        password: hashedPassword,
+        scope,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return {
+      message: 'Database Error: Failed to Create User.',
+    };
+  }
+
+  revalidatePath('/dashboard/users');
+  redirect('/dashboard/users');
+}
+
+const UpdateUserSchema = UserFormSchema.extend({
+  id: z.string(),
+  username: z.string().optional(),
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  password: z.string().optional(),
+  scope: z.string().optional(),
+  image: z.any().optional().refine(
+    (file) => !file || (file instanceof Blob && ['image/png', 'image/jpeg'].includes(file.type)),
+    { message: 'File must be either PNG or JPG' }
+  ),
+});
+
+export async function updateUser(prevState: any, formData: FormData) {
+  const validatedFields = UpdateUserSchema.safeParse({
+    id: formData.get('id'),
+    username: formData.get('username') || undefined,
+    name: formData.get('name') || undefined,
+    email: formData.get('email') || undefined,
+    password: formData.get('password') || undefined,
+    scope: formData.get('scope') || undefined,
+    image: formData.get('image') || undefined,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Validation Failed. Please check your inputs.',
+    };
+  }
+
+  const { id, ...updateFields } = validatedFields.data;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { image: true }
+    });
+
+    let imageData = null;
+    const imageFile = formData.get('image') as File | null;
+    if (imageFile) {
+      if (user?.image) {
+        const oldImageData = JSON.parse(user.image);
+        await cloudinary.uploader.destroy(oldImageData.publicUrl);
+      }
+
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'user-images' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as UploadApiResponse);
+          }
+        ).end(buffer);
+      });
+
+      imageData = JSON.stringify({
+        imageUrl: result.secure_url,
+        publicUrl: result.public_id
+      });
+    }
+
+    const updateData: any = {};
+
+    for (const [key, value] of Object.entries(updateFields)) {
+      if (value !== undefined) {
+        if (key === 'password') {
+          updateData[key] = await bcrypt.hash(value as string, 10);
+        } else if (key === 'image') {
+          if (imageData) {
+            updateData[key] = imageData;
+          }
+        } else {
+          updateData[key] = value;
+        }
+      }
+    }
+
+    await prisma.user.update({
+      where: { id },
+      data: updateData,
+    });
+  } catch (error) {
+    console.error(error);
+    return {
+      message: 'Database Error: Failed to Update User.',
+    };
+  }
+
+  revalidatePath('/dashboard/users');
+  redirect('/dashboard/users');
+}
+
+
+export async function deleteUser(userId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { image: true }
+    });
+
+    if (user?.image) {
+      const imageData = JSON.parse(user.image);
+      await cloudinary.uploader.destroy(imageData.publicUrl);
+    }
+
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+  } catch (error) {
+    return {
+      message: "Database Error: Failed to Delete User.",
+    };
+  }
+  revalidatePath('/dashboard/users');
+}
+
+

@@ -1,6 +1,6 @@
 import { UpdateOrder, DeleteOrder } from "./Buttons";
 import OrderStatus from "./OrderStatus";
-import { formatDateToLocal, formatCurrency } from "./utils";
+import { formatDateToLocal } from "./utils";
 import { fetchFilteredSubmissions } from "../data/data";
 import Avatar from "@/shared/Avatar/Avatar";
 

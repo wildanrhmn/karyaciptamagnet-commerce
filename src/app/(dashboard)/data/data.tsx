@@ -651,6 +651,89 @@ export async function fetchSubCategories() {
   }
 }
 
+export async function fetchFilteredUsers(query: string, currentPage: number) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        AND: [
+          { scope: { not: "member" } },
+          {
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { email: { contains: query, mode: "insensitive" } },
+              { username: { contains: query, mode: "insensitive" } },
+            ],
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: offset,
+      take: ITEMS_PER_PAGE,
+    });
+
+    const usersWithParsedImage = users.map(user => ({
+      ...user,
+      imageUrl: user.image ? JSON.parse(user.image).imageUrl : ""
+    }));
+
+    return usersWithParsedImage;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch filtered users.");
+  }
+}
+
+export async function fetchFilteredUsersPages(query: string) {
+  noStore();
+  try {
+    const count = await prisma.user.count({
+      where: {
+        AND: [
+          { scope: { not: "member" } },
+          {
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { email: { contains: query, mode: "insensitive" } },
+              { username: { contains: query, mode: "insensitive" } },
+            ],
+          },
+        ],
+      },
+    });
+
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of user pages.");
+  }
+}
+
+export async function fetchUserById(id: string) {
+  noStore();
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+   return user;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch user.");
+  }
+}
+
+
+
 
 
 
