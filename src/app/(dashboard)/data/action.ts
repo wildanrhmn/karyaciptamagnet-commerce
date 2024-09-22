@@ -107,12 +107,130 @@ export async function createProductAndRedirect(prevState: ProductState, formData
   return result;
 }
 
+export async function updateProduct(productId: string, prevState: ProductState, formData: FormData): Promise<ProductState> {
+  const validatedFields = ProductSchema.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description"),
+    weight: formData.get("weight"),
+    priceRange: formData.get("priceRange"),
+    productCategoryId: formData.get("productCategoryId"),
+    productSubCategoryId: formData.get("productSubCategoryId"),
+    stock: formData.get("stock"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Update Product.",
+    };
+  }
+
+  const {
+    name,
+    description,
+    weight,
+    priceRange,
+    productCategoryId,
+    productSubCategoryId,
+    stock,
+  } = validatedFields.data;
+
+  const slug = name.toLowerCase().replace(/\s+/g, '-');
+  const smallDescription = description.length > 100 ? description.slice(0, 100) + '...' : description;
+
+  try {
+    const existingProduct = await prisma.product.findUnique({
+      where: { productId },
+      include: { ProductImages: true },
+    });
+
+    if (!existingProduct) {
+      return {
+        message: "Product not found.",
+      };
+    }
+
+    const existingImages = existingProduct.ProductImages;
+    const updatedImageUrls = [];
+    const imagesToDelete = [...existingImages];
+
+    for (let i = 0; i < 3; i++) {
+      const imageData = formData.get(`image${i}`);
+      if (imageData) {
+        const result = await cloudinary.uploader.upload(imageData as string, {
+          folder: 'product-images',
+        });
+        updatedImageUrls.push({ imageUrl: result.secure_url, publicUrl: result.public_id });
+      } else if (existingImages[i]) {
+        updatedImageUrls.push(existingImages[i]);
+        imagesToDelete.splice(imagesToDelete.findIndex(img => img.productImageId === existingImages[i].productImageId), 1);
+      }
+    }
+
+    for (const image of imagesToDelete) {
+      await cloudinary.uploader.destroy(image.publicUrl);
+    }
+
+    await prisma.product.update({
+      where: { productId },
+      data: {
+        name,
+        description,
+        weight,
+        priceRange,
+        productCategoryId,
+        productSubCategoryId,
+        stock,
+        slug,
+        smallDescription,
+        ProductImages: {
+          deleteMany: {},
+          create: updatedImageUrls,
+        },
+      },
+    });
+
+    revalidatePath("/dashboard/inventory");
+    return { message: "Product updated successfully" };
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return {
+      message: "Database Error: Failed to Update Product.",
+    };
+  }
+}
+
 type UpdateOrderState = {
   errors?: {
     [key: string]: string[] | undefined;
   };
   message: string | null;
 };
+
+export async function deleteProduct(productId: string) {
+  try {
+    await prisma.productImage.deleteMany({
+      where: {
+        productId: productId,
+      },
+    });
+
+    await prisma.product.delete({
+      where: {
+        productId: productId,
+      },
+    });
+
+    revalidatePath("/dashboard/inventory");
+    return { message: "Product deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return {
+      message: "Database Error: Failed to Delete Product.",
+    };
+  }
+}
+
 
 export async function deleteOrder(id: string) {
   try {

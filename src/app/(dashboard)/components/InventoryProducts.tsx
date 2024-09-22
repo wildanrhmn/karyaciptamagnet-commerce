@@ -1,4 +1,8 @@
-import { fetchFilteredProducts } from "../data/data";
+import {
+  fetchFilteredProducts,
+  fetchCategories,
+  fetchSubCategories,
+} from "../data/data";
 import ProductCard from "./ProductCard";
 import { Package } from "lucide-react";
 
@@ -10,12 +14,21 @@ export default async function InventoryProducts({
   currentPage: number;
 }) {
   const products = await fetchFilteredProducts(query, currentPage);
+  const [categories, subCategories] = await Promise.all([
+    fetchCategories(),
+    fetchSubCategories(),
+  ]);
   return (
     <div>
       {products.length > 0 ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10 mt-8 lg:mt-10">
           {products.map((item, index) => (
-            <ProductCard product={item} key={index} />
+            <ProductCard
+              product={item}
+              productCategories={categories}
+              productSubCategories={subCategories}
+              key={index}
+            />
           ))}
         </div>
       ) : (

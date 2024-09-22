@@ -20,7 +20,7 @@ const NcModal: FC<NcModalProps> = ({
   renderContent,
   contentExtraClass = "max-w-screen-xl",
   contentPaddingClass = "py-4 px-6 md:py-5",
-  triggerText = "Open Modal",
+  triggerText = "",
   modalTitle = "Modal title",
   isOpenProp,
   onCloseModal,
@@ -46,12 +46,6 @@ const NcModal: FC<NcModalProps> = ({
 
   return (
     <div className="nc-NcModal">
-      {renderTrigger ? (
-        renderTrigger(openModal)
-      ) : (
-        <Button onClick={openModal}> {triggerText} </Button>
-      )}
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"

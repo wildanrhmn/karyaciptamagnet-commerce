@@ -1,10 +1,11 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useState, useCallback } from "react";
 import Prices from "@/components/Prices";
 import ButtonPrimary from "@/shared/Button/ButtonPrimary";
 import ButtonSecondary from "@/shared/Button/ButtonSecondary";
-import ModalEdit from "@/components/ModalEdit";
+import ModalEdit from "./ModalEditProduct";
+import ModalDelete from "./ModalDeleteProduct";
 import { EditIcon, TrashIcon } from "lucide-react";
 import ProductStatus from "@/components/ProductStatus";
 import Link from "next/link";
@@ -13,10 +14,26 @@ import NcImage from "@/shared/NcImage/NcImage";
 export interface ProductCardProps {
   className?: string;
   product: any;
+  productCategories: any[];
+  productSubCategories: any[];
 }
 
-const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
+const ProductCard: FC<ProductCardProps> = ({
+  className,
+  product,
+  productCategories,
+  productSubCategories,
+}) => {
   const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+
+  const handleEditClick = useCallback(() => {
+    setShowModalEdit(true);
+  }, []);
+
+  const handleDeleteClick = useCallback(() => {
+    setShowModalDelete(true);
+  }, []);
   const renderGroupButtons = () => {
     return (
       <div className="absolute inset-0 flex items-center justify-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all bg-black bg-opacity-50">
@@ -24,7 +41,7 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
           className="shadow-lg mr-2"
           fontSize="text-xs"
           sizeClass="py-2 px-4"
-          onClick={() => setShowModalEdit(true)}
+          onClick={handleEditClick}
         >
           <EditIcon className="w-3.5 h-3.5 mb-0.5" />
           <span className="ms-1">Edit</span>
@@ -34,6 +51,7 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
           className="bg-white hover:!bg-gray-100 hover:text-slate-900 transition-colors shadow-lg"
           fontSize="text-xs"
           sizeClass="py-2 px-4"
+          onClick={handleDeleteClick}
         >
           <TrashIcon className="w-3.5 h-3.5" />
           <span className="ms-1">Delete</span>
@@ -88,16 +106,26 @@ const ProductCard: FC<ProductCardProps> = ({ className, product }) => {
               <span className="font-medium">Weight:</span> {product?.weight}g
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              <span className="font-medium">Order Count:</span> {product?.orderCount}
+              <span className="font-medium">Order Count:</span>{" "}
+              {product?.orderCount}
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              <span className="font-medium">Created:</span> {new Date(product?.createdAt).toLocaleDateString()}
+              <span className="font-medium">Created:</span>{" "}
+              {new Date(product?.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
         <ModalEdit
           show={showModalEdit}
           onCloseModalEdit={() => setShowModalEdit(false)}
+          product={product}
+          productCategories={productCategories}
+          productSubCategories={productSubCategories}
+        />
+        <ModalDelete
+          productId={product.productId}
+          show={showModalDelete}
+          onCloseModalDelete={() => setShowModalDelete(false)}
         />
       </div>
     </>
