@@ -14,9 +14,9 @@ export default async function Page({ params }: { params: { id: string } }) {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Submissions', href: '/dashboard/submissions' },
+          { label: 'Pengajuan Harga', href: '/dashboard/submissions' },
           {
-            label: 'Edit Submission',
+            label: 'Edit Pengajuan',
             href: `/dashboard/submissions/${id}/edit`,
             active: true,
           },

@@ -1,11 +1,12 @@
-import Link from 'next/link';
 import NavLinks from '@/app/(dashboard)/components/NavLinks';
-import Image from 'next/image';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import Logo from "@/shared/Logo/Logo";
 import { signOut } from '@/auth/auth';
+import { auth } from '@/auth/auth';
 
-export default function SideNav() {
+export default async function SideNav() {
+  const session = await auth();
+  const userScope = session?.user?.scope;
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <div
@@ -14,7 +15,7 @@ export default function SideNav() {
         <Logo />
       </div>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks />
+        <NavLinks userScope={userScope} />
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <form
         action={async () => {

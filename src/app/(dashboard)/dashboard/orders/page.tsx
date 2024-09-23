@@ -21,10 +21,10 @@ export default async function Page(
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl`}>Orders History</h1>
+        <h1 className={`${lusitana.className} text-2xl`}>Riwayat Pesanan</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search orders..." />
+        <Search placeholder="Cari pesanan..." />
       </div>
        <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <OrdersTable query={query} currentPage={currentPage} />

@@ -140,10 +140,10 @@ export default async function SubmissionsTable({
                 />
               </svg>
               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No submissions
+                Tidak ada pengajuan
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                No submissions found.
+                Tidak ada pengajuan.
               </p>
             </div>
           )}

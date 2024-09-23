@@ -2,30 +2,40 @@
 import { fetchReportData } from './reportData';
 import { SalesSummary } from './SalesSummary';
 import { MonthlySalesChart } from './MonthlySalesChart';
-import { TopProducts } from './TopProduct';
-import { DownloadPDFButton } from './DownloadPDFButton';
+import { TopProducts } from './TopProducts';
+import { RecentOrders } from './RecentOrders';
+import { SalesByCategory } from './SalesByCategory';
+import React from 'react';
 
 export default async function ReportPage() {
-  const { totalSales, monthlyOrders, topProducts, recentOrders } = await fetchReportData();
+  const { totalSales, monthlyOrders, topProducts, recentOrders, salesByCategory } = await fetchReportData();
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold text-gray-800">Sales Report</h1>
-          <DownloadPDFButton />
+    <div className="min-h-screen py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-10">
+          <h1 className="text-4xl font-bold text-gray-800">Laporan Penjualan</h1>
         </div>
-        <div id="report-content" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="report-content" className="space-y-10">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div className="lg:col-span-2">
               <SalesSummary totalSales={totalSales._sum.totalPrice || 0} />
             </div>
-            <TopProducts products={topProducts} />
+            <div className="lg:col-span-2">
+              <TopProducts products={topProducts} />
+            </div>
           </div>
-          <div className="mt-6">
-            <MonthlySalesChart monthlyOrders={monthlyOrders} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <MonthlySalesChart monthlyOrders={monthlyOrders} />
+            </div>
+            <div className="lg:col-span-1">
+              <SalesByCategory data={salesByCategory} />
+            </div>
           </div>
-          {/* Add more report components here */}
+          <div className="grid grid-cols-1">
+            <RecentOrders orders={recentOrders} />
+          </div>
         </div>
       </div>
     </div>

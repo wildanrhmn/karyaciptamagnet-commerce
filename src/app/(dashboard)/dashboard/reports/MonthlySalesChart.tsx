@@ -1,14 +1,42 @@
 // app/dashboard/reports/MonthlySalesChart.tsx
 'use client';
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from "framer-motion";
 
-export function MonthlySalesChart({ monthlyOrders }: { monthlyOrders: any[] }) {
-  const data = monthlyOrders.map(order => ({
-    date: new Date(order.createdAt).toLocaleDateString(),
-    amount: order.totalPrice
-  }));
+interface OrderData {
+  createdAt: Date;
+  totalPrice: number | null;
+}
+
+interface ChartData {
+  date: string;
+  amount: number;
+}
+
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
+};
+
+export function MonthlySalesChart({ monthlyOrders }: { monthlyOrders: OrderData[] }) {
+  const groupedData = monthlyOrders.reduce<Record<string, ChartData>>((acc, order) => {
+    const date = order.createdAt.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
+    if (!acc[date]) {
+      acc[date] = { date, amount: 0 };
+    }
+    acc[date].amount += order.totalPrice || 0;
+    return acc;
+  }, {});
+
+  const data: ChartData[] = Object.values(groupedData);
+
+  if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p>No sales data available for the past three months.</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -20,15 +48,15 @@ export function MonthlySalesChart({ monthlyOrders }: { monthlyOrders: any[] }) {
         <CardHeader className="pb-0 pt-2 px-4">
           <h4 className="font-bold text-lg">Monthly Sales</h4>
         </CardHeader>
-        <CardBody className="overflow-visible py-2">
+        <CardBody className="overflow-visible py-2 w-full h-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="amount" stroke="#8884d8" strokeWidth={2} />
-            </LineChart>
+              <YAxis tickFormatter={(value) => `${value / 1000}K`} />
+              <Tooltip formatter={(value: number) => formatCurrency(value)} />
+              <Bar dataKey="amount" fill="#8884d8" />
+            </BarChart>
           </ResponsiveContainer>
         </CardBody>
       </Card>

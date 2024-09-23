@@ -15,7 +15,7 @@ function customColors(cssVar) {
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  darkMode: "class", // or 'media' or 'class',
+  darkMode: "class",
   theme: {
     container: {
       center: true,
@@ -27,6 +27,9 @@ module.exports = {
     },
 
     extend: {
+      gridTemplateColumns: {
+        '13': 'repeat(13, minmax(0, 1fr))',
+      },
       colors: {
         primary: {
           50: customColors("--c-primary-50"),
@@ -64,6 +67,13 @@ module.exports = {
           800: customColors("--c-neutral-800"),
           900: customColors("--c-neutral-900"),
         },
+      },
+    },
+  },
+  keyframes: {
+    shimmer: {
+      '100%': {
+        transform: 'translateX(100%)',
       },
     },
   },

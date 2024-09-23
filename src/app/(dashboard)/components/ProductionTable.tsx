@@ -132,10 +132,10 @@ export default async function ProductionTable({
                 />
               </svg>
               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No production orders
+                Tidak ada kebutuhan produksi
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                No production orders found.
+                Tidak ada kebutuhan produksi.
               </p>
             </div>
           )}

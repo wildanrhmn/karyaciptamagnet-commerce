@@ -119,10 +119,10 @@ export default async function OrdersTable({
                 />
               </svg>
               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No orders
+                Tidak ada pesanan
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                No orders found.
+                Tidak ada pesanan.
               </p>
             </div>
           )}
