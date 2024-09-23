@@ -678,13 +678,13 @@ export async function fetchFilteredUsers(query: string, currentPage: number) {
 
     const usersWithParsedImage = users.map(user => ({
       ...user,
-      imageUrl: user.image ? JSON.parse(user.image).imageUrl : ""
+      imageUrl: user.image ? JSON.parse(user.image)?.imageUrl || null : null
     }));
 
     return usersWithParsedImage;
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch filtered users.");
+    throw new Error(`Failed to fetch filtered users: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
