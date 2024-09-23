@@ -1,8 +1,8 @@
 'use client';
 
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { Button } from './Button';
+import ButtonPrimary from '@/shared/Button/ButtonPrimary';
+import ButtonSecondary from '@/shared/Button/ButtonSecondary';
 import { updateOrder } from '../data/action';
 import Image from 'next/image';
 import { toast } from "react-hot-toast";
@@ -78,15 +78,12 @@ export default function SubmissionForm({ order }: { order: any }) {
         ))}
       </div>
       <div className="flex justify-end gap-4">
-        <Link
-          href="/dashboard/submissions"
-          className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Cancel
-        </Link>
-        <Button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-          Update Final Prices
-        </Button>
+        <ButtonSecondary href="/dashboard/submissions">
+          Batal
+        </ButtonSecondary>
+        <ButtonPrimary type="submit">
+          Ajukan Harga
+        </ButtonPrimary>
       </div>
     </form>
   );
