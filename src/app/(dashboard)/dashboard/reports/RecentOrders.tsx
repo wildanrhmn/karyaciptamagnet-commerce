@@ -12,7 +12,7 @@ interface RecentOrdersProps {
   }[];
 }
 
-export function RecentOrders({ orders }: RecentOrdersProps) {
+export function RecentOrders({ orders }: any) {
   const formatToIDR = (amount: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
   };
@@ -49,7 +49,7 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
           <h4 className="font-bold text-2xl text-gray-800">Recent Orders</h4>
         </CardHeader>
         <CardBody className="overflow-visible py-4 px-6">
-          {orders.map((order, index) => (
+          {orders.map((order: any, index: any) => (
             <div key={index} className="mb-6">
               <div className="flex justify-between items-center mb-1">
                 <p className="font-medium text-gray-700">Order ID: #{order.orderId}</p>
